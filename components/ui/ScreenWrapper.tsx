@@ -27,9 +27,9 @@ export function ScreenWrapper({ children, onRefresh, ...props }: ScreenWrapperPr
         <RefreshControl
           refreshing={refreshing}
           onRefresh={handleRefresh}
-          tintColor="#ef4444" // red-500
-          colors={['#ef4444', '#b91c1c']} // red-500, red-700
-          progressBackgroundColor="#1a1a1a"
+          tintColor="#000" // red-500
+          colors={['#000', '#202020']} // red-500, red-700
+          progressBackgroundColor="#fff"
         />
       }
     >

@@ -67,9 +67,9 @@ export default function HomeScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={handleRefresh}
-              tintColor="#ef4444"
-              colors={['#ef4444', '#b91c1c']}
-              progressBackgroundColor="#1a1a1a"
+              tintColor="#000"
+              colors={['#000', '#202020 ']}
+              progressBackgroundColor="#fff"
             />
           }
           showsVerticalScrollIndicator={false}
