@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { View, Text, Animated } from 'react-native';
+import { useState, useRef, useCallback } from 'react';
+import { View, Text, Animated, RefreshControl } from 'react-native';
 import { useAuth } from '../context/auth-context';
 import { useProfile } from '../context/profile-context';
 import { KanjiLoader } from '@/components/ui/kanji-loader';
@@ -10,7 +10,17 @@ import { HomeContent } from '@/app/components/home/HomeContent';
 export default function HomeScreen() {
   const { logout } = useAuth();
   const [loggingOut, setLoggingOut] = useState(false);
-  const { profile, loading, error } = useProfile();
+  const { profile, loading, error, refetchProfile } = useProfile();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await refetchProfile();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refetchProfile]);
 
 
 
@@ -19,7 +29,7 @@ export default function HomeScreen() {
   const handleLogout = async () => {
     setLoggingOut(true);
     await logout();
-  };
+    };
 
   if (loading) {
     return (
@@ -53,6 +63,15 @@ export default function HomeScreen() {
           })}
           scrollEventThrottle={16}
           bounces={true}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor="#ef4444"
+              colors={['#ef4444', '#b91c1c']}
+              progressBackgroundColor="#1a1a1a"
+            />
+          }
           showsVerticalScrollIndicator={false}
         >
           <HomeHeader profile={profile} />

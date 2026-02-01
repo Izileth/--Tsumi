@@ -1,8 +1,14 @@
-import { View, Text, ScrollView, Pressable } from "react-native";
-import { useState } from "react";
+import { View, Text, Pressable, ScrollView} from "react-native";
+import { useState, useCallback } from "react";
+import { ScreenWrapper } from "@/components/ui/ScreenWrapper";
 
 export default function MissionsScreen() {
   const [selectedTab, setSelectedTab] = useState("available");
+
+  const handleRefresh = useCallback(async () => {
+    // Data is static, so we just simulate a refresh for UI consistency
+    return Promise.resolve();
+  }, []);
 
   const missions = [
     {
@@ -205,7 +211,7 @@ export default function MissionsScreen() {
     : completedMissions;
 
   return (
-    <ScrollView className="flex-1 bg-black">
+    <ScreenWrapper onRefresh={handleRefresh}>
       {/* HEADER */}
       <View className="relative h-56 overflow-hidden bg-gradient-to-b from-red-950 via-red-900 to-black">
         <View className="absolute inset-0 opacity-5">
@@ -516,6 +522,6 @@ export default function MissionsScreen() {
           </Text>
         </View>
       </View>
-    </ScrollView>
+    </ScreenWrapper>
   );
 }

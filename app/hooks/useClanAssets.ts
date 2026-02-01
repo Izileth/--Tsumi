@@ -244,5 +244,5 @@ export const useClanAssets = (clanId: string | undefined) => {
     }
   };
 
-  return { territories, missions, events, availableTerritories, loading, createTerritory, annexTerritory, createMission, completeMission, updateTerritory, deleteTerritory, updateMission, deleteMission };
+  return { territories, missions, events, availableTerritories, loading, createTerritory, annexTerritory, createMission, completeMission, updateTerritory, deleteTerritory, updateMission, deleteMission, refetchAssets: fetchAssets };
 };

@@ -1,5 +1,6 @@
-import { View, Text, ScrollView } from "react-native";
-import { useState, useRef } from "react";
+import { View, Text } from "react-native";
+import { useState, useRef, useCallback } from "react";
+import { ScreenWrapper } from "@/components/ui/ScreenWrapper";
 import { useProfile } from "@/app/context/profile-context";
 import { useClanAssets } from "@/app/hooks/useClanAssets";
 import { useClanMembers } from "@/app/hooks/useClanMembers";
@@ -24,8 +25,16 @@ export default function ClanScreen() {
   
   const isOwner = profile?.id === profile?.clans?.owner_id;
 
-  const { territories, missions, events, availableTerritories, loading: assetsLoading, createTerritory, annexTerritory, createMission, completeMission, updateTerritory, deleteTerritory, updateMission, deleteMission } = useClanAssets(profile?.clans?.id);
-  const { members, recruitableMembers, loading: membersLoading, recruitMember } = useClanMembers(profile?.clans?.id, isOwner, profile?.id);
+  const { territories, missions, events, availableTerritories, loading: assetsLoading, refetchAssets, createTerritory, annexTerritory, createMission, completeMission, updateTerritory, deleteTerritory, updateMission, deleteMission } = useClanAssets(profile?.clans?.id);
+  const { members, recruitableMembers, loading: membersLoading, refetch: refetchMembers, recruitMember } = useClanMembers(profile?.clans?.id, isOwner, profile?.id);
+
+  const handleRefresh = useCallback(async () => {
+    // We don't need Promise.all here as they don't depend on each other
+    // and the hooks manage their own loading state.
+    // We can trigger them and let them run in parallel.
+    refetchAssets();
+    refetchMembers();
+  }, [refetchAssets, refetchMembers]);
 
   const addTerritorySheetRef = useRef<any>(null);
   const addMissionSheetRef = useRef<any>(null);
@@ -109,7 +118,7 @@ export default function ClanScreen() {
 
   return (
     <>
-      <ScrollView className="flex-1 bg-black">
+      <ScreenWrapper onRefresh={handleRefresh}>
         {/* HEADER */}
         <View className="relative h-56 overflow-hidden bg-gradient-to-b from-red-950 via-red-900 to-black">
           <View className="absolute inset-0 opacity-5">
@@ -189,7 +198,7 @@ export default function ClanScreen() {
             </Text>
           </View>
         </View>
-      </ScrollView>
+      </ScreenWrapper>
       <AddTerritorySheet 
         ref={addTerritorySheetRef} 
         onCreate={handleCreateNewTerritory} 

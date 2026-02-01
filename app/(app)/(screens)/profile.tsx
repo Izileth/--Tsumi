@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import { ScreenWrapper } from "@/components/ui/ScreenWrapper";
 import { useAuth } from '@/app/context/auth-context';
 import { useProfile } from "@/app/context/profile-context";
 import { ClanManagementModal } from '@/components/clan-management';
@@ -17,6 +18,10 @@ export default function ProfileScreen() {
   const { logout } = useAuth();
   // Data now comes from the single source of truth: ProfileContext
   const { profile, loading, error, refetchProfile, updateProfile } = useProfile();
+
+  const handleRefresh = useCallback(async () => {
+    await refetchProfile();
+  }, [refetchProfile]);
 
   const bottomSheetModalRef = useRef<any>(null);
   const clanSheetRef = useRef<any>(null);
@@ -109,7 +114,7 @@ export default function ProfileScreen() {
 
   return (
     <>
-      <ScrollView className="flex-1 bg-black">
+      <ScreenWrapper onRefresh={handleRefresh}>
         <ProfileHeader profile={profile} />
         <ProfileInfo
           profile={profile}
@@ -135,7 +140,7 @@ export default function ProfileScreen() {
             textClassName="text-red-400"
           />
         </View>
-      </ScrollView>
+      </ScreenWrapper>
 
       {/* EditProfileSheet no longer needs props */}
       <EditProfileSheet ref={bottomSheetModalRef} />

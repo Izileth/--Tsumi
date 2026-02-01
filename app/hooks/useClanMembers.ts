@@ -90,6 +90,14 @@ export function useClanMembers(clanId?: string, isOwner?: boolean, ownerId?: str
     }
   }, [clanId, isOwner]);
 
+  const refetchAll = useCallback(() => {
+    setLoading(true);
+    Promise.all([
+      fetchMembers(),
+      fetchRecruitableMembers()
+    ]).finally(() => setLoading(false));
+  }, [fetchMembers, fetchRecruitableMembers]);
+
   const recruitMember = async (memberId: string) => {
     if (!clanId) return;
     const { error } = await supabase
@@ -123,12 +131,8 @@ export function useClanMembers(clanId?: string, isOwner?: boolean, ownerId?: str
   };
 
   useEffect(() => {
-    setLoading(true);
-    Promise.all([
-      fetchMembers(),
-      fetchRecruitableMembers()
-    ]).finally(() => setLoading(false));
-  }, [fetchMembers, fetchRecruitableMembers]);
+    refetchAll();
+  }, [refetchAll]);
 
-  return { members, recruitableMembers, loading, recruitMember };
+  return { members, recruitableMembers, loading, recruitMember, refetch: refetchAll };
 }

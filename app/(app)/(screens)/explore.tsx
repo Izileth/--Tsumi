@@ -1,5 +1,6 @@
-import { View, Text, ScrollView } from "react-native";
-import { useState } from "react";
+import { View, Text } from "react-native";
+import { useState, useCallback } from "react";
+import { ScreenWrapper } from "@/components/ui/ScreenWrapper";
 import { useExploreData } from "@/app/hooks/useExploreData";
 import { KanjiLoader } from "@/components/ui/kanji-loader";
 import { Dashboard } from "@/app/components/explore/Dashboard";
@@ -19,7 +20,11 @@ const exploreTabs: Tab<ExploreTab>[] = [
 
 export default function ExploreScreen() {
   const [selectedTab, setSelectedTab] = useState<ExploreTab>('dashboard');
-  const { clans, territories, events, districts, loading } = useExploreData();
+  const { clans, territories, events, districts, loading, refetch } = useExploreData();
+
+  const handleRefresh = useCallback(async () => {
+    await refetch();
+  }, [refetch]);
 
   const renderContent = () => {
     switch (selectedTab) {
@@ -37,7 +42,7 @@ export default function ExploreScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-black">
+    <ScreenWrapper onRefresh={handleRefresh}>
       {/* HERO HEADER */}
       <View className="relative h-64 overflow-hidden bg-gradient-to-b from-red-950 via-red-900 to-black">
         <View className="absolute inset-0 opacity-5">
@@ -91,6 +96,6 @@ export default function ExploreScreen() {
           </Text>
         </View>
       </View>
-    </ScrollView>
+    </ScreenWrapper>
   );
 }

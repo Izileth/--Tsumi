@@ -114,6 +114,8 @@ export default function CommentsScreen() {
               <Text className="text-red-900 text-sm">最初のコメントを残す</Text>
             </View>
           }
+          onRefresh={fetchPost}
+          refreshing={loading}
         />
 
         {/* Input de Comentário */}
