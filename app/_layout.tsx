@@ -12,7 +12,7 @@ import '@/global.css';
 
 
 const RootLayoutNav = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, isOffline } = useAuth();
   const segments = useSegments();
   const router = useRouter();
   const [isSplashAnimationFinished, setSplashAnimationFinished] = useState(false);
@@ -27,8 +27,19 @@ const RootLayoutNav = () => {
     // Wait until auth is loaded and splash animation is done
     if (loading || !isSplashAnimationFinished) return;
 
+    // If database is offline, redirect to error page unless already there
+    if (isOffline) {
+      if (segments[0] !== 'database-offline') {
+        router.replace('/database-offline');
+      }
+      return;
+    }
+
     // An auth flow route is one that lives in the (auth) or (password) groups.
     const inAuthFlow = segments[1] === '(auth)' || segments[1] === '(password)';
+    const isOfflinePage = segments[0] === 'database-offline';
+
+    if (isOfflinePage) return;
 
     // If the user is not signed in and is not in an auth flow route,
     // redirect to the login page.
@@ -40,7 +51,7 @@ const RootLayoutNav = () => {
     else if (user && inAuthFlow) {
       router.replace('/(app)');
     }
-  }, [user, loading, segments, router, isSplashAnimationFinished]);
+  }, [user, loading, isOffline, segments, router, isSplashAnimationFinished]);
 
   // This useEffect handles the splash screen fade-out animation.
   useEffect(() => {

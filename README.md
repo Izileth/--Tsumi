@@ -81,8 +81,8 @@ Siga as instruções abaixo para configurar e executar o projeto em seu ambiente
 
 3.  **Configure as Variáveis de Ambiente**: Crie um arquivo `.env` na raiz do projeto e adicione suas chaves de API do Supabase.
     ```env
-    SUPABASE_URL=SUA_URL_DO_SUPABASE
-    SUPABASE_ANON_KEY=SUA_CHAVE_ANON_DO_SUPABASE
+    EXPO_PUBLIC_SUPABASE_URL=SUA_URL_DO_SUPABASE
+    EXPO_PUBLIC_SUPABASE_ANON_KEY=SUA_CHAVE_ANON_DO_SUPABASE
     ```
     *Você pode encontrar essas chaves nas configurações de API do seu projeto Supabase.*
 
