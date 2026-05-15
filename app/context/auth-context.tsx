@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
 import * as Notifications from 'expo-notifications';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { supabase } from '../lib/supabase';
 
 interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
@@ -36,14 +36,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const fetchSession = async () => {
       try {
         // Define a timeout for the session fetch to detect offline database
-        const timeoutPromise = new Promise((_, reject) => 
+        const timeoutPromise = new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Database connection timeout')), 8000)
         );
 
         const sessionPromise = supabase.auth.getSession();
 
         const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]) as any;
-        
+
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -77,25 +77,25 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Increment xp
       await supabase.rpc('increment_xp');
 
-         // Schedule notification on successful login
+      // Schedule notification on successful login
       await Notifications.scheduleNotificationAsync({
-          content: {
-            title: "Login Bem-sucedido! 🚀",
-            body: "Bom te ver de novo!",
-            sound: 'default',
-            data: { rota: "Home" },
-            attachments: [
-              {
-                identifier: "login-image",
-                url: "./assets/images/icon.png  ", // Ensure this path is correct
-                type: "image",
-              }
-            ],
-          },
-          trigger: { type: 'timeInterval', seconds: 1 }, // Add trigger property to schedule notification after 1 second
-        });
+        content: {
+          title: "Login Bem-sucedido! 🚀",
+          body: "Bom te ver de novo!",
+          sound: 'default',
+          data: { rota: "Home" },
+          attachments: [
+            {
+              identifier: "login-image",
+              url: "./assets/images/icon.png  ", // Ensure this path is correct
+              type: "image",
+            }
+          ],
+        },
+        trigger: { type: 'timeInterval', seconds: 1 }, // Schedule notification after 1 second
+      });
 
-        
+
 
 
     },

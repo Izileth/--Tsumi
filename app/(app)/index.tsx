@@ -68,7 +68,7 @@ export default function HomeScreen() {
               refreshing={refreshing}
               onRefresh={handleRefresh}
               tintColor="#000"
-              colors={['#000', '#202020 ']}
+              colors={['#000', '#202020']}
               progressBackgroundColor="#fff"
             />
           }

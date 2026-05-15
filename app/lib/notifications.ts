@@ -38,13 +38,21 @@ export async function registerForPushNotificationsAsync() {
       return;
     }
     try {
-      const projectId = Constants.expoConfig?.extra?.eas.projectId;
+      // Android push notifications (remote) were removed from Expo Go in SDK 53.
+      // We check if we're in Expo Go on Android to avoid the error.
+      const isExpoGo = Constants.appOwnership === 'expo';
+      if (Platform.OS === 'android' && isExpoGo) {
+        console.warn('Push notifications (remote) are not supported in Expo Go on Android with SDK 53+. Use a development build.');
+        return;
+      }
+
+      const projectId = Constants.expoConfig?.extra?.eas.projectId || Constants.easConfig?.projectId;
       if (!projectId) {
         throw new Error('Could not find Project ID in app.json/app.config.js');
       }
       token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
     } catch (e) {
-      console.error(e);
+      console.log('Push notification registration skipped or failed:', e);
     }
   } else {
     alert('Must use physical device for Push Notifications');
