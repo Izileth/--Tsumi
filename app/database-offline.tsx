@@ -12,6 +12,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { useEffect } from "react";
+import { useAuth } from "./context/auth-context";
 import Svg, { Defs, Pattern, Path, Rect, Circle } from "react-native-svg";
 
 const GridBackground = () => (
@@ -119,9 +120,15 @@ const ErrorCode = () => {
 
 export default function DatabaseOffline() {
   const router = useRouter();
+  const { refreshConnection } = useAuth();
+
+  const handleRetry = async () => {
+    await refreshConnection();
+    router.replace("/");
+  };
 
   return (
-    <View className="flex-1 bg-[#080808] justify-center items-center px-7">
+    <View className="flex-1 bg-[#080000] justify-center items-center px-7">
       <StatusBar style="light" />
       <GridBackground />
 
@@ -160,7 +167,7 @@ export default function DatabaseOffline() {
           </View>
 
           <TouchableOpacity
-            onPress={() => router.replace("/")}
+            onPress={handleRetry}
             activeOpacity={0.75}
             className="w-full h-12 bg-red-600 rounded-xl flex-row items-center justify-center gap-2 mb-2.5"
           >

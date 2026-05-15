@@ -16,7 +16,7 @@ type ProfileContextType = {
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
 export const ProfileProvider = ({ children }: { children: ReactNode }) => {
-  const { user } = useAuth();
+  const { user, setIsOffline } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any>(null);
@@ -46,8 +46,13 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
         throw fetchError;
       }
       setProfile(data as Profile);
-    } catch (e) {
+      setIsOffline(false); // Reset offline status on success
+    } catch (e: any) {
       setError(e);
+      // Check for network errors (Supabase/Fetch specific)
+      if (e.message?.includes('FetchError') || e.message?.includes('Network request failed') || e.code === 'OFFLINE') {
+        setIsOffline(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -62,34 +67,41 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     
     const oldLevel = profile?.level;
 
-    const { data, error: updateError } = await supabase
-      .from('profiles')
-      .update(updates)
-      .eq('id', user.id)
-      .select(`
-        *,
-        clans (
-          *
-        )
-      `)
-      .single();
+    try {
+      const { data, error: updateError } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', user.id)
+        .select(`
+          *,
+          clans (
+            *
+          )
+        `)
+        .single();
 
-    if (updateError) throw updateError;
-    
-    const newLevel = data?.level;
+      if (updateError) throw updateError;
+      
+      const newLevel = data?.level;
 
-    if (oldLevel && newLevel && newLevel > oldLevel) {
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "Você subiu de nível!",
-          body: `Parabéns, você alcançou o nível ${newLevel}!`,
-        },
-        trigger: null,
-      });
+      if (oldLevel && newLevel && newLevel > oldLevel) {
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Você subiu de nível!",
+            body: `Parabéns, você alcançou o nível ${newLevel}!`,
+          },
+          trigger: null,
+        });
+      }
+
+      setProfile(data as Profile); // Update global state immediately
+      return data;
+    } catch (e: any) {
+      if (e.message?.includes('FetchError') || e.message?.includes('Network request failed')) {
+        setIsOffline(true);
+      }
+      throw e;
     }
-
-    setProfile(data as Profile); // Update global state immediately
-    return data;
   };
 
   const uploadProfileAsset = async (file: any, assetType: 'avatar' | 'banner') => {

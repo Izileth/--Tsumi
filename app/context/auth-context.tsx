@@ -10,6 +10,8 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   isOffline: boolean;
+  setIsOffline: (value: boolean) => void;
+  refreshConnection: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,28 +34,32 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(true);
   const [isOffline, setIsOffline] = useState(false);
 
+  const fetchSession = async () => {
+    try {
+      setLoading(true);
+      // Define a timeout for the session fetch to detect offline database
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Database connection timeout')), 8000)
+      );
+
+      const sessionPromise = supabase.auth.getSession();
+
+      const { data: { session: currentSession }, error } = await Promise.race([sessionPromise, timeoutPromise]) as any;
+
+      if (error) throw error;
+
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
+      setIsOffline(false);
+      setLoading(false);
+    } catch (error) {
+      console.error('Connection/Auth check error:', error);
+      setIsOffline(true);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchSession = async () => {
-      try {
-        // Define a timeout for the session fetch to detect offline database
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Database connection timeout')), 8000)
-        );
-
-        const sessionPromise = supabase.auth.getSession();
-
-        const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]) as any;
-
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-        setIsOffline(true);
-        setLoading(false);
-      }
-    };
-
     fetchSession();
 
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
@@ -68,36 +74,32 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const value = {
     signIn: async (email: string, password: string) => {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      try {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
 
-      // Increment login count
-      await supabase.rpc('increment_login_count');
+        // Increment login count
+        await supabase.rpc('increment_login_count');
 
-      // Increment xp
-      await supabase.rpc('increment_xp');
+        // Increment xp
+        await supabase.rpc('increment_xp');
 
-      // Schedule notification on successful login
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "Login Bem-sucedido! 🚀",
-          body: "Bom te ver de novo!",
-          sound: 'default',
-          data: { rota: "Home" },
-          attachments: [
-            {
-              identifier: "login-image",
-              url: "./assets/images/icon.png  ", // Ensure this path is correct
-              type: "image",
-            }
-          ],
-        },
-        trigger: { type: 'timeInterval', seconds: 1 }, // Schedule notification after 1 second
-      });
-
-
-
-
+        // Schedule notification on successful login
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Login Bem-sucedido! 🚀",
+            body: "Bom te ver de novo!",
+            sound: 'default',
+            data: { rota: "Home" },
+          },
+          trigger: { type: 'timeInterval', seconds: 1 },
+        });
+      } catch (error: any) {
+        if (error.message?.includes('FetchError') || error.message?.includes('Network request failed')) {
+          setIsOffline(true);
+        }
+        throw error;
+      }
     },
     logout: async () => {
       await supabase.auth.signOut();
@@ -106,6 +108,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     user,
     loading,
     isOffline,
+    setIsOffline,
+    refreshConnection: fetchSession,
   };
 
   return (
