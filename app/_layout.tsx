@@ -73,7 +73,7 @@ const RootLayoutNav = () => {
   return (
     <View style={{ flex: 1 }}>
       <Slot />
-      <StatusBar style="light" backgroundColor="#000000" translucent />
+      <StatusBar style="light" />
 
       {/* The splash screen is an overlay that fades out, it no longer replaces the Slot */}
       {!isAppReady && (
