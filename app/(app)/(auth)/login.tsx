@@ -2,7 +2,7 @@ import { useState } from "react";
 import { View, Text, TextInput, Pressable, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff, Lock, User } from "lucide-react-native";
-import { Video, ResizeMode } from 'expo-av';
+// import { Video, ResizeMode } from 'expo-av';
 import { useAuth } from "../../context/auth-context";
 import { CustomButton } from "../../../components/ui/custom-button";
 
@@ -38,7 +38,7 @@ export default function LoginScreen() {
   return (
     <View className="flex-1 bg-black">
       {/* Video Background */}
-      <Video
+      {/* <Video
         source={require('@/assets/videos/background.mp4')} // Ajuste o caminho
         style={{
           position: 'absolute',
@@ -52,7 +52,7 @@ export default function LoginScreen() {
         isLooping
         isMuted
         rate={1.0}
-      />
+      /> */}
       
       {/* Overlay escuro para melhorar legibilidade */}
       <View className="absolute inset-0 bg-black/70" />

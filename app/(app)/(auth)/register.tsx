@@ -2,7 +2,7 @@ import { View, Text, TextInput, Pressable, Image } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import { User, Lock, Eye, EyeOff, Mail } from "lucide-react-native";
-import { Video, ResizeMode } from 'expo-av';
+// import { Video, ResizeMode } from 'expo-av';
 import { supabase } from "../../lib/supabase";
 import { CustomButton } from "../../../components/ui/custom-button";
 import Toast from "react-native-toast-message";
@@ -80,7 +80,7 @@ export default function RegisterScreen() {
   return (
     <View className="flex-1 bg-black">
       {/* Video Background */}
-      <Video
+      {/* <Video
       source={require('@/assets/videos/background.mp4')} // Ajuste o caminho
         style={{
           position: 'absolute',
@@ -94,7 +94,7 @@ export default function RegisterScreen() {
         isLooping
         isMuted
         rate={1.0}
-      />
+      /> */}
       
       {/* Overlay escuro */}
       <View className="absolute inset-0 bg-black/70" />
