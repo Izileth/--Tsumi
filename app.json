@@ -42,7 +42,11 @@
           "photosPermission": "The app need accesses your photos."
         }
       ],
-      "expo-maps"
+      "expo-maps",
+      "expo-font",
+      "expo-image",
+      "expo-status-bar",
+      "expo-web-browser"
     ],
     "android": {
       "adaptiveIcon": {
