@@ -1,9 +1,10 @@
 import { Pressable, Text, PressableProps, StyleProp, ViewStyle } from "react-native";
-import { KanjiLoader } from "./kanji-loader";
+import { ButtonLoader } from "./button-loader";
 
 interface CustomButtonProps extends PressableProps {
   title: string;
   isLoading?: boolean;
+  loadingText?: string;
   className?: string;
   textClassName?: string;
   style?: StyleProp<ViewStyle>;
@@ -12,6 +13,7 @@ interface CustomButtonProps extends PressableProps {
 export function CustomButton({
   title,
   isLoading,
+  loadingText,
   className,
   textClassName,
   style,
@@ -27,7 +29,7 @@ export function CustomButton({
       } ${className}`}
     >
       {isLoading ? (
-        <KanjiLoader />
+        <ButtonLoader text={loadingText} />
       ) : (
         <Text className={`${textClassName}`}>
           {title}

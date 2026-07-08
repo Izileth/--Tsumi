@@ -75,7 +75,7 @@ export function HomeContent({ profile, handleLogout, loggingOut }: HomeContentPr
           </Pressable>
         </Link>
 
-        
+
         <Link href="/feed" asChild>
           <Pressable className="active:opacity-70">
             <View className="flex-row items-center justify-between bg-black p-4 rounded-lg border border-neutral-800 mb-3">
@@ -103,8 +103,9 @@ export function HomeContent({ profile, handleLogout, loggingOut }: HomeContentPr
         title="Sair da Conta"
         onPress={handleLogout}
         isLoading={loggingOut}
-        className="bg-red-600 rounded-sm p-3 active:bg-red-700 shadow-lg shadow-red-600/40 w-full"
-        textClassName="text-sm font-bold text-white tracking-wide"
+        loadingText="Saindo..."
+        className="h-14 bg-red-600 rounded-xl active:bg-red-700 shadow-lg shadow-red-600/40 w-full"
+        textClassName="text-lg font-bold text-white tracking-wide"
       />
 
       {/* Footer com símbolo */}

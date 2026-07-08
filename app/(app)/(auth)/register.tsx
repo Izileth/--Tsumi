@@ -190,6 +190,7 @@ export default function RegisterScreen() {
             title="Cadastrar"
             onPress={handleRegister}
             isLoading={loading}
+            loadingText="Criando Conta..."
             className="h-14 bg-red-600 rounded-xl active:bg-red-700 shadow-lg shadow-red-600/40 w-full"
             textClassName="text-lg font-bold text-white tracking-wide"
           />

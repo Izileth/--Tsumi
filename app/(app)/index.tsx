@@ -3,7 +3,7 @@ import { HomeContent } from '@/app/components/home/HomeContent';
 import { HomeHeader } from '@/app/components/home/HomeHeader';
 import { PullToRevealSymbol } from '@/app/components/home/PullToRevealSymbol';
 import { KanjiLoader } from '@/components/ui/kanji-loader';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Animated, RefreshControl, Text, View } from 'react-native';
 import { useAuth } from '../context/auth-context';
 import { useProfile } from '../context/profile-context';
@@ -24,7 +24,7 @@ export default function HomeScreen() {
 
 
 
-  const scrollY = useRef(new Animated.Value(0)).current;
+  const scrollY = useMemo(() => new Animated.Value(0), []);
 
   const handleLogout = async () => {
     setLoggingOut(true);
