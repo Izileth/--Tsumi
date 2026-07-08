@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect, useCallback, useContext, Rea
 import { supabase } from '../lib/supabase';
 import { useAuth } from './auth-context';
 import type { Profile } from '../lib/types';
-import * as Notifications from 'expo-notifications';
+// import * as Notifications from 'expo-notifications';
 
 type ProfileContextType = {
   profile: Profile | null;
@@ -85,13 +85,13 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
       const newLevel = data?.level;
 
       if (oldLevel && newLevel && newLevel > oldLevel) {
-        await Notifications.scheduleNotificationAsync({
-          content: {
-            title: "Você subiu de nível!",
-            body: `Parabéns, você alcançou o nível ${newLevel}!`,
-          },
-          trigger: null,
-        });
+        // await Notifications.scheduleNotificationAsync({
+        //   content: {
+        //     title: "Você subiu de nível!",
+        //     body: `Parabéns, você alcançou o nível ${newLevel}!`,
+        //   },
+        //   trigger: null,
+        // });
       }
 
       setProfile(data as Profile); // Update global state immediately

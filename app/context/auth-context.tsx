@@ -1,5 +1,5 @@
 import { Session, User } from '@supabase/supabase-js';
-import * as Notifications from 'expo-notifications';
+// import * as Notifications from 'expo-notifications';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
@@ -85,15 +85,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         await supabase.rpc('increment_xp');
 
         // Schedule notification on successful login
-        await Notifications.scheduleNotificationAsync({
-          content: {
-            title: "Login Bem-sucedido! 🚀",
-            body: "Bom te ver de novo!",
-            sound: 'default',
-            data: { rota: "Home" },
-          },
-          trigger: { type: 'timeInterval', seconds: 1 },
-        });
+        // await Notifications.scheduleNotificationAsync({
+        //   content: {
+        //     title: "Login Bem-sucedido! 🚀",
+        //     body: "Bom te ver de novo!",
+        //     sound: 'default',
+        //     data: { rota: "Home" },
+        //   },
+        //   trigger: { type: 'timeInterval', seconds: 1 },
+        // });
       } catch (error: any) {
         if (error.message?.includes('FetchError') || error.message?.includes('Network request failed')) {
           setIsOffline(true);
