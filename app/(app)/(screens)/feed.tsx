@@ -1,16 +1,15 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, FlatList, ActivityIndicator, Pressable } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, Pressable, StyleSheet } from 'react-native';
 import { usePosts } from '../../hooks/use-posts';
 import { PostItem } from '../../components/feed/PostItem';
 import { useAuth } from '../../context/auth-context';
-import { PlusCircle, FileText, RefreshCw } from 'lucide-react-native';
+import { Plus, FileText, RefreshCw } from 'lucide-react-native';
 import { CreatePostSheet } from '../../components/feed/CreatePostSheet';
 import { Post } from '@/app/lib/types';
 
 export default function FeedScreen() {
   const { user } = useAuth();
   const { posts, loading, error, fetchPosts, addReaction, deleteReaction, createPost, deletePost, updatePost } = usePosts();
-
   const createPostSheetRef = useRef<any>(null);
 
   useEffect(() => {
@@ -29,127 +28,122 @@ export default function FeedScreen() {
     createPostSheetRef.current?.present(post);
   };
 
+  /* ── Loading ── */
   if (loading && posts.length === 0) {
     return (
       <View className="flex-1 justify-center items-center bg-black">
-        <View className="items-center gap-4">
-          <View className="w-20 h-20 bg-red-950/20 rounded-full items-center justify-center">
-            <ActivityIndicator size="large" color="#ef4444" />
-          </View>
-          <Text className="text-neutral-500 text-base">Carregando feed...</Text>
-          <Text className="text-red-600 text-sm">読み込み中</Text>
-        </View>
+        <ActivityIndicator size="large" color="#ef4444" />
+        <Text className="text-zinc-600 text-sm mt-3 tracking-widest">フィード</Text>
       </View>
     );
   }
 
+  /* ── Error ── */
   if (error) {
     return (
-      <View className="flex-1 justify-center items-center bg-black p-6">
-        <View className="items-center">
-          <View className="w-20 h-20 bg-red-950/30 rounded-full items-center justify-center mb-6">
-            <Text className="text-red-600 text-3xl">⚠</Text>
-          </View>
-
-          <Text className="text-red-500 text-center text-lg font-bold mb-2">Erro ao carregar</Text>
-          <Text className="text-neutral-500 text-center mb-6">{error}</Text>
-
-          <Pressable
-            onPress={() => fetchPosts()}
-            className="bg-red-600 px-6 py-3 rounded-lg flex-row items-center gap-2"
-          >
-            <RefreshCw size={18} color="#fff" />
-            <Text className="text-white font-bold">Tentar novamente</Text>
-          </Pressable>
-        </View>
+      <View className="flex-1 justify-center items-center bg-black px-8">
+        <Text className="text-zinc-600 text-4xl mb-4">罪</Text>
+        <Text className="text-white font-bold text-base mb-1 text-center">Falha ao carregar</Text>
+        <Text className="text-zinc-600 text-sm text-center mb-6">{error}</Text>
+        <Pressable
+          onPress={() => fetchPosts()}
+          className="flex-row items-center gap-2 border border-zinc-800 rounded-full px-5 py-2.5 active:opacity-60"
+        >
+          <RefreshCw size={14} color="#71717a" />
+          <Text className="text-zinc-400 text-sm">Tentar novamente</Text>
+        </Pressable>
       </View>
     );
   }
 
+  /* ── Main ── */
   return (
-    <>
-      <View className="flex-1  bg-black">
-        <FlatList
-          data={posts}
-          renderItem={({ item }) => (
-            <View className='px-1 '>
-              <PostItem
-                post={item}
-                onReact={addReaction}
-                onDeleteReaction={deleteReaction}
-                currentUserId={user?.id}
-                onDelete={deletePost}
-                onEdit={handleEditPost}
-              />
+    <View className="flex-1 bg-black">
+      <FlatList
+        data={posts}
+        renderItem={({ item }) => (
+          <PostItem
+            post={item}
+            onReact={addReaction}
+            onDeleteReaction={deleteReaction}
+            currentUserId={user?.id}
+            onDelete={deletePost}
+            onEdit={handleEditPost}
+          />
+        )}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
+
+        /* ── Section header ── */
+        ListHeaderComponent={
+          <View className="px-4 pt-5 pb-4 flex-row items-center justify-between border-b border-zinc-900">
+            <View>
+              <Text className="text-white text-xl font-black tracking-tight">Feed</Text>
+              <Text className="text-red-600 text-xs tracking-widest mt-0.5">フィード</Text>
             </View>
-          )}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ paddingTop: 20, flexGrow: 1, paddingBottom: 90 }}
-          ListHeaderComponent={
-            <View className="mb-6 m-16 mx-2">
-              <View className="flex-row items-center mb-2">
-                <View className="w-1.5 h-8 bg-red-600 rounded-full mr-3" />
-                <View>
-                  <Text className="text-3xl font-bold text-white">Feed</Text>
-                  <Text className="text-red-600 text-sm tracking-wider">フィード</Text>
-                </View>
-              </View>
-              <View className="h-[2px] bg-gradient-to-r from-red-600 via-red-800 to-transparent mt-2" />
+            <Pressable
+              onPress={() => createPostSheetRef.current?.present()}
+              className="flex-row items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-full px-4 py-2 active:opacity-60"
+            >
+              <Plus size={14} color="#ef4444" />
+              <Text className="text-red-500 text-xs font-bold">Postar</Text>
+            </Pressable>
+          </View>
+        }
+
+        /* ── Empty state ── */
+        ListEmptyComponent={
+          !loading ? (
+            <View className="flex-1 items-center justify-center py-24 px-8">
+              <Text className="text-zinc-800 text-5xl mb-4">情報</Text>
+              <Text className="text-zinc-400 font-bold text-base mb-1">Nenhuma postagem</Text>
+              <Text className="text-zinc-600 text-sm text-center mb-6">
+                Seja o primeiro a compartilhar algo.
+              </Text>
+              <Pressable
+                onPress={() => createPostSheetRef.current?.present()}
+                className="flex-row items-center gap-2 bg-red-600 rounded-full px-6 py-2.5 active:opacity-70"
+              >
+                <Plus size={16} color="#fff" />
+                <Text className="text-white font-bold text-sm">Criar postagem</Text>
+              </Pressable>
             </View>
-          }
-          ListEmptyComponent={
-            !loading ? (
-              <View className="flex-1 justify-center items-center py-20">
-                <View className="w-24 h-24 bg-red-950/20 rounded-full items-center justify-center mb-6">
-                  <FileText size={48} color="#7f1d1d" />
-                </View>
-                <Text className="text-neutral-400 text-xl font-bold mb-2">Nenhuma postagem ainda</Text>
-                <Text className="text-neutral-600 text-base mb-1">Seja o primeiro a postar algo!</Text>
-                <Text className="text-red-900 text-sm">まだ投稿がありません</Text>
+          ) : null
+        }
 
-                <Pressable
-                  onPress={() => createPostSheetRef.current?.present()}
-                  className="mt-8 bg-red-600 px-6 py-3 rounded-lg flex-row items-center gap-2"
-                >
-                  <PlusCircle size={20} color="#fff" />
-                  <Text className="text-white font-bold">Criar primeira postagem</Text>
-                </Pressable>
-              </View>
-            ) : null
-          }
-          onRefresh={fetchPosts}
-          refreshing={loading}
-        />
+        onRefresh={fetchPosts}
+        refreshing={loading}
+      />
 
-        {/* FAB - Floating Action Button */}
-        <Pressable
-          onPress={() => createPostSheetRef.current?.present()}
-          className="absolute bottom-6 right-6 rounded-full w-16 h-16 justify-center items-center"
-          style={{
-            elevation: 12,
-            shadowColor: '#ef4444',
-            shadowOffset: { width: 0, height: 6 },
-            shadowOpacity: 0.5,
-            shadowRadius: 12,
-          }}
-        >
-          {/* Background com gradiente (simulado com múltiplas camadas) */}
-          <View className="absolute inset-0 bg-red-600 rounded-full" />
-          <View className="absolute inset-0 bg-gradient-to-br from-red-500 to-red-700 rounded-full opacity-90" />
+      {/* ── FAB ── */}
+      <Pressable
+        onPress={() => createPostSheetRef.current?.present()}
+        style={styles.fab}
+        className="absolute bottom-24 right-5 w-14 h-14 bg-red-600 rounded-full items-center justify-center active:opacity-70"
+      >
+        <Plus size={24} color="#fff" strokeWidth={2.5} />
+      </Pressable>
 
-          {/* Anel externo pulsante */}
-          <View className="absolute inset-[-4px] border-2 border-red-600/30 rounded-full" />
-
-          {/* Ícone */}
-          <PlusCircle size={32} color="#ffffff" strokeWidth={2.5} />
-        </Pressable>
-
-        <CreatePostSheet
-          ref={createPostSheetRef}
-          onSubmit={handleCreatePost}
-          onUpdate={handleUpdatePost}
-        />
-      </View>
-    </>
+      <CreatePostSheet
+        ref={createPostSheetRef}
+        onSubmit={handleCreatePost}
+        onUpdate={handleUpdatePost}
+      />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  list: {
+    flexGrow: 1,
+    paddingBottom: 120,
+  },
+  fab: {
+    shadowColor: '#ef4444',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+});

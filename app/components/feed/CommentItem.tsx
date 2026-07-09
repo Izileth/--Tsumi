@@ -18,21 +18,28 @@ export function CommentItem({ comment }: CommentItemProps) {
   };
 
   return (
-    <View className="flex-row gap-3 mb-4">
-      <Pressable onPress={navigateToProfile}>
-        <Image 
-          source={{ uri: comment.profiles.avatar_url || 'https://via.placeholder.com/150' }}
-          className="w-8 h-8 rounded-full"
-        />
+    <View className="flex-row gap-3 px-4 py-3 border-b border-zinc-900">
+      <Pressable onPress={navigateToProfile} className="active:opacity-60">
+        {comment.profiles.avatar_url ? (
+          <Image
+            source={{ uri: comment.profiles.avatar_url }}
+            className="w-8 h-8 rounded-full border border-zinc-800"
+          />
+        ) : (
+          <View className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 items-center justify-center">
+            <Text className="text-sm">🐲</Text>
+          </View>
+        )}
       </Pressable>
-      <View className="flex-1 border-l border-zinc-700 rounded-lg p-3">
-        <View className="flex-row justify-between items-center mb-1">
-          <Pressable onPress={navigateToProfile}>
+
+      <View className="flex-1">
+        <View className="flex-row items-center gap-2 mb-1">
+          <Pressable onPress={navigateToProfile} className="active:opacity-60">
             <Text className="text-white font-bold text-sm">{comment.profiles.username}</Text>
           </Pressable>
-          <Text className="text-neutral-500 text-xs">{formatDate(comment.created_at)}</Text>
+          <Text className="text-zinc-700 text-xs">{formatDate(comment.created_at)}</Text>
         </View>
-        <Text className="text-neutral-300">{comment.content}</Text>
+        <Text className="text-zinc-400 text-sm leading-relaxed">{comment.content}</Text>
       </View>
     </View>
   );

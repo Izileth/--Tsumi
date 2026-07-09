@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Image, Pressable, Alert } from 'react-native';
 import { Post } from '../../lib/types';
 import { useRouter } from 'expo-router';
-import { Heart, MessageCircle, MoreHorizontal, Trash2, Edit } from 'lucide-react-native';
+import { Heart, MessageCircle, MoreHorizontal, Trash2, Edit2 } from 'lucide-react-native';
 import { formatDate } from '../../utils/formatDate';
 import { PostImageCarousel } from './PostImageCarousel';
 
@@ -17,10 +17,12 @@ type PostItemProps = {
 
 export function PostItem({ post, onReact, onDeleteReaction, onDelete, onEdit, currentUserId }: PostItemProps) {
   const router = useRouter();
-  const [isMenuVisible, setMenuVisible] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const isAuthor = post.user_id === currentUserId;
   const userReaction = post.post_reactions.find(r => r.user_id === currentUserId);
+  const likeCount = post.post_reactions.length;
+  const commentCount = post.post_comments?.length || 0;
 
   const handleReaction = () => {
     if (userReaction) {
@@ -41,60 +43,76 @@ export function PostItem({ post, onReact, onDeleteReaction, onDelete, onEdit, cu
   };
 
   const handleDelete = () => {
-    setMenuVisible(false);
+    setMenuOpen(false);
     Alert.alert(
-      "Excluir Postagem",
-      "Tem certeza que deseja excluir esta postagem? Esta ação é irreversível.",
+      'Excluir postagem',
+      'Esta ação é irreversível.',
       [
-        { text: "Cancelar", style: "cancel" },
-        { text: "Excluir", style: "destructive", onPress: () => onDelete(post.id) },
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Excluir', style: 'destructive', onPress: () => onDelete(post.id) },
       ]
     );
   };
 
   const handleEdit = () => {
-    setMenuVisible(false);
+    setMenuOpen(false);
     onEdit(post);
   };
 
   return (
-    <View className="bg-black border-none rounded-lg mb-4 overflow-hidden">
-      {/* Post Header */}
-      <View className="flex-row items-center p-4 border-b border-zinc-950">
-        <Pressable onPress={navigateToProfile}>
-          <View className="relative">
+    <View className="mb-px bg-black border-b border-zinc-900">
+
+      {/* ── Author row ── */}
+      <View className="flex-row items-center px-4 pt-4 pb-3">
+        <Pressable onPress={navigateToProfile} className="active:opacity-60">
+          {post.profiles.avatar_url ? (
             <Image
-              source={{ uri: post.profiles.avatar_url || 'https://via.placeholder.com/150' }}
-              className="w-11 h-11 rounded-full"
+              source={{ uri: post.profiles.avatar_url }}
+              className="w-9 h-9 rounded-full border border-zinc-800"
             />
-            <View className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-white rounded-full border-2 border-black" />
-          </View>
+          ) : (
+            <View className="w-9 h-9 rounded-full bg-zinc-900 border border-zinc-800 items-center justify-center">
+              <Text className="text-base">🐲</Text>
+            </View>
+          )}
         </Pressable>
-        
+
         <View className="flex-1 ml-3">
-          <Pressable onPress={navigateToProfile}>
-            <Text className="text-white font-bold text-base">{post.profiles.username}</Text>
+          <Pressable onPress={navigateToProfile} className="active:opacity-60">
+            <Text className="text-white font-bold text-sm">{post.profiles.username}</Text>
           </Pressable>
-          <Text className="text-zinc-500 text-xs mt-0.5">{formatDate(post.created_at)}</Text>
+          <Text className="text-zinc-600 text-xs mt-0.5">{formatDate(post.created_at)}</Text>
         </View>
 
+        {/* Author menu */}
         {isAuthor && (
           <View>
-            <Pressable 
-              onPress={() => setMenuVisible(!isMenuVisible)} 
-              className="w-8 h-8 items-center justify-center bg-black rounded-lg relative"
+            <Pressable
+              onPress={() => setMenuOpen(v => !v)}
+              className="w-8 h-8 items-center justify-center active:opacity-50"
             >
-              <MoreHorizontal size={18} color="#a1a1aa" />
+              <MoreHorizontal size={18} color="#52525b" />
             </Pressable>
-            {isMenuVisible && (
-              <View className="absolute top-10 right-0 bg-black border border-zinc-800 rounded-lg shadow-lg z-10 w-32">
-                <Pressable onPress={handleEdit} className="flex-row items-center gap-2 p-3">
-                  <Edit size={16} color="#fff" />
-                  <Text className="text-white">Editar</Text>
+
+            {menuOpen && (
+              <View
+                className="absolute top-9 right-0 bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden z-20"
+                style={{ width: 130 }}
+              >
+                <Pressable
+                  onPress={handleEdit}
+                  className="flex-row items-center gap-2.5 px-4 py-3 active:bg-zinc-900"
+                >
+                  <Edit2 size={14} color="#a1a1aa" />
+                  <Text className="text-zinc-300 text-sm">Editar</Text>
                 </Pressable>
-                <Pressable onPress={handleDelete} className="flex-row items-center gap-2 p-3 border-t border-zinc-800">
-                  <Trash2 size={16} color="#a1a1aa" />
-                  <Text className="text-zinc-400">Excluir</Text>
+                <View className="h-px bg-zinc-800" />
+                <Pressable
+                  onPress={handleDelete}
+                  className="flex-row items-center gap-2.5 px-4 py-3 active:bg-zinc-900"
+                >
+                  <Trash2 size={14} color="#ef4444" />
+                  <Text className="text-red-500 text-sm">Excluir</Text>
                 </Pressable>
               </View>
             )}
@@ -102,75 +120,69 @@ export function PostItem({ post, onReact, onDeleteReaction, onDelete, onEdit, cu
         )}
       </View>
 
-      {/* Post Content */}
-      <View className="px-4 py-4">
-        {/* Título com barra decorativa */}
-        <View className="flex-row mb-3">
-          <View className="w-1 bg-white rounded-full mr-2" />
-          <Text className="flex-1 text-xl font-bold text-white leading-tight">{post.title}</Text>
-        </View>
+      {/* ── Content ── */}
+      <View className="px-4 pb-3">
+        {/* Title */}
+        <Text className="text-white font-bold text-base leading-snug mb-1">
+          {post.title}
+        </Text>
 
-        {post.description && (
-          <Text className="text-zinc-300 text-base leading-relaxed mb-3">
+        {/* Description */}
+        {post.description ? (
+          <Text className="text-zinc-400 text-sm leading-relaxed">
             {post.description}
           </Text>
-        )}
-        
+        ) : null}
+
+        {/* Images */}
         {post.images && post.images.length > 0 && (
-          <PostImageCarousel images={post.images} />
+          <View className="mt-3">
+            <PostImageCarousel images={post.images} />
+          </View>
         )}
 
+        {/* Hashtags */}
         {post.hashtags && post.hashtags.length > 0 && (
-          <View className="flex-row flex-wrap gap-2 mt-2">
-            {post.hashtags.map((ht, index) => (
-              ht.tag && (
-                <View key={index} className="bg-zinc-900 border border-zinc-800 rounded-md px-2.5 py-1">
-                  <Text className="text-white text-xs font-bold">#{ht.tag}</Text>
+          <View className="flex-row flex-wrap gap-1.5 mt-3">
+            {post.hashtags.map((ht, i) =>
+              ht.tag ? (
+                <View key={i} className="bg-zinc-900 rounded-md px-2 py-0.5">
+                  <Text className="text-red-500 text-xs font-semibold">#{ht.tag}</Text>
                 </View>
-              )
-            ))}
+              ) : null
+            )}
           </View>
         )}
       </View>
 
-      {/* Post Actions */}
-      <View className="flex-row items-center justify-between px-4 py-3 border-none border-zinc-800">
-        <View className="flex-row items-center gap-6">
-          {/* Botão de Like */}
-          <Pressable 
-            onPress={handleReaction} 
-            className="flex-row items-center gap-2"
+      {/* ── Actions row ── */}
+      <View className="flex-row items-center px-4 pb-4 gap-5">
+        {/* Like */}
+        <Pressable
+          onPress={handleReaction}
+          className="flex-row items-center gap-1.5 active:opacity-60"
+        >
+          <Heart
+            size={18}
+            color={userReaction ? '#ef4444' : '#52525b'}
+            fill={userReaction ? '#ef4444' : 'transparent'}
+            strokeWidth={2}
+          />
+          <Text
+            className={`text-sm font-semibold ${userReaction ? 'text-red-500' : 'text-zinc-600'}`}
           >
-            <View className={`w-9 h-9 rounded-lg items-center justify-center ${
-              userReaction ? 'bg-white' : 'bg-black'
-            }`}>
-              <Heart 
-                size={18} 
-                color={userReaction ? '#000' : '#a1a1aa'} 
-                fill={userReaction ? '#000' : 'transparent'} 
-              />
-            </View>
-            <Text className={`font-bold ${
-              userReaction ? 'text-white' : 'text-zinc-500'
-            }`}>
-              {post.post_reactions.length}
-            </Text>
-          </Pressable>
+            {likeCount}
+          </Text>
+        </Pressable>
 
-          {/* Botão de Comentários */}
-          <Pressable 
-            onPress={handleCommentPress} 
-            className="flex-row items-center gap-2"
-          >
-            <View className="w-9 h-9 bg-black rounded-lg items-center justify-center">
-              <MessageCircle size={18} color="#a1a1aa" />
-            </View>
-            <Text className="text-zinc-500 font-bold">
-              {post.post_comments?.length || 0}
-            </Text>
-          </Pressable>
-        </View>
-      
+        {/* Comments */}
+        <Pressable
+          onPress={handleCommentPress}
+          className="flex-row items-center gap-1.5 active:opacity-60"
+        >
+          <MessageCircle size={18} color="#52525b" strokeWidth={2} />
+          <Text className="text-zinc-600 text-sm font-semibold">{commentCount}</Text>
+        </Pressable>
       </View>
     </View>
   );
