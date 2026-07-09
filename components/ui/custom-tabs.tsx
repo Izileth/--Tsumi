@@ -1,5 +1,5 @@
 import { View, Text, Pressable, ScrollView, Animated } from 'react-native';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 
 type TabOption = 'members' | 'territories' | 'missions' | 'recruit';
 
@@ -11,8 +11,10 @@ interface TabItemProps {
 }
 
 const TabItem = ({ label, value, isSelected, onPress }: TabItemProps) => {
-    const scaleAnim = useRef(new Animated.Value(isSelected ? 1 : 0.95)).current;
-    const borderAnim = useRef(new Animated.Value(isSelected ? 1 : 0)).current;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const scaleAnim = useMemo(() => new Animated.Value(isSelected ? 1 : 0.95), []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const borderAnim = useMemo(() => new Animated.Value(isSelected ? 1 : 0), []);
 
     useEffect(() => {
         Animated.parallel([
@@ -28,7 +30,7 @@ const TabItem = ({ label, value, isSelected, onPress }: TabItemProps) => {
                 useNativeDriver: false,
             }),
         ]).start();
-    }, [isSelected]);
+    }, [isSelected, scaleAnim, borderAnim]);
 
     const borderHeight = borderAnim.interpolate({
         inputRange: [0, 1],
@@ -90,7 +92,7 @@ interface CustomTabsProps {
 }
 
 export const CustomTabs = ({ selectedTab, setSelectedTab, isOwner }: CustomTabsProps) => {
-    const tabs: Array<{ label: string; value: TabOption; ownerOnly?: boolean }> = [
+    const tabs: { label: string; value: TabOption; ownerOnly?: boolean }[] = [
         { label: 'Membros', value: 'members' },
         { label: 'Territórios', value: 'territories' },
         { label: 'Missões', value: 'missions' },

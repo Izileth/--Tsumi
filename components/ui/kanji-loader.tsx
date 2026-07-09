@@ -1,12 +1,13 @@
 import { View, Animated, Text } from "react-native";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo } from "react";
 
 const KANJIS = ['無', '道', '心'];
 
 export const KanjiLoader = () => {
-  const animatedValues = useRef(
-    KANJIS.map(() => new Animated.Value(0))
-  ).current;
+  const animatedValues = useMemo(
+    () => KANJIS.map(() => new Animated.Value(0)),
+    []
+  );
 
   useEffect(() => {
     const animations = animatedValues.map((animValue, index) =>
@@ -77,7 +78,7 @@ export const KanjiLoader = () => {
 };
 
 const KanjiProgressBar = () => {
-  const translateX = useRef(new Animated.Value(-60)).current;
+  const translateX = useMemo(() => new Animated.Value(-60), []);
 
   useEffect(() => {
     Animated.loop(

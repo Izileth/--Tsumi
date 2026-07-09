@@ -6,7 +6,7 @@ interface ScreenWrapperProps extends ScrollViewProps {
   children: React.ReactNode;
 }
 
-export function ScreenWrapper({ children, onRefresh, ...props }: ScreenWrapperProps) {
+export function ScreenWrapper({ children, onRefresh, style, contentContainerStyle, ...props }: ScreenWrapperProps) {
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = useCallback(async () => {
@@ -20,8 +20,8 @@ export function ScreenWrapper({ children, onRefresh, ...props }: ScreenWrapperPr
 
   return (
     <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
+      style={[styles.container, style]}
+      contentContainerStyle={[styles.contentContainer, contentContainerStyle]}
       {...props}
       refreshControl={
         <RefreshControl
@@ -45,5 +45,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
+    paddingBottom: 96,
   },
 });

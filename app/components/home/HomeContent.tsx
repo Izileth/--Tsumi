@@ -1,5 +1,4 @@
-import { View, Text, Pressable } from 'react-native';
-import { Link } from 'expo-router';
+import { View, Text } from 'react-native';
 import { Profile } from '@/app/lib/types';
 import { CustomButton } from '@/components/ui/custom-button';
 
@@ -11,7 +10,7 @@ type HomeContentProps = {
 
 export function HomeContent({ profile, handleLogout, loggingOut }: HomeContentProps) {
   return (
-    <View className="px-6 -mt-8 relative z-10">
+    <View className="px-6 -mt-8 relative z-10 pb-24">
       {/* Boas-vindas */}
       <View className="mb-8 pt-8">
         <Text className="text-white text-3xl font-bold mb-2">
@@ -53,50 +52,7 @@ export function HomeContent({ profile, handleLogout, loggingOut }: HomeContentPr
           fortalece sua posição no submundo.
         </Text>
 
-        <Link href="/profile" asChild>
-          <Pressable className="active:opacity-70">
-            <View className="flex-row items-center justify-between bg-black p-4 rounded-lg border border-neutral-800 mb-3">
-              <View className="flex-row items-center gap-3">
-                <Text className="text-white font-semibold text-base">Ver Perfil</Text>
-              </View>
-              <Text className="text-red-500">→</Text>
-            </View>
-          </Pressable>
-        </Link>
 
-        <Link href="/explore" asChild>
-          <Pressable className="active:opacity-70">
-            <View className="flex-row items-center justify-between bg-black p-4 rounded-lg border border-neutral-800 mb-3">
-              <View className="flex-row items-center gap-3">
-                <Text className="text-white font-semibold text-base">Explorar Territórios</Text>
-              </View>
-              <Text className="text-red-500">→</Text>
-            </View>
-          </Pressable>
-        </Link>
-
-
-        <Link href="/feed" asChild>
-          <Pressable className="active:opacity-70">
-            <View className="flex-row items-center justify-between bg-black p-4 rounded-lg border border-neutral-800 mb-3">
-              <View className="flex-row items-center gap-3">
-                <Text className="text-white font-semibold text-base">Explorar Feed</Text>
-              </View>
-              <Text className="text-red-500">→</Text>
-            </View>
-          </Pressable>
-        </Link>
-
-        <Link href="/clan" asChild>
-          <Pressable className="active:opacity-70">
-            <View className="flex-row items-center justify-between bg-black p-4 rounded-lg border border-neutral-800 mb-3">
-              <View className="flex-row items-center gap-3">
-                <Text className="text-white font-semibold text-base">Gerenciar Clã</Text>
-              </View>
-              <Text className="text-red-500">→</Text>
-            </View>
-          </Pressable>
-        </Link>
       </View>
 
       <CustomButton

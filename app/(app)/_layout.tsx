@@ -2,6 +2,8 @@ import { Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { registerForPushNotificationsAsync } from '../lib/notifications';
 import { supabase } from '../lib/supabase';
+import { FloatingNavBar } from '../components/home/FloatingNavBar';
+import { View } from 'react-native';
 
 export default function AppLayout() {
   useEffect(() => {
@@ -28,18 +30,21 @@ export default function AppLayout() {
   }, []);
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="index" options={{  headerShown: false, gestureEnabled: true }} />
-      <Stack.Screen name="(screens)/explore" options={{ presentation: 'modal', title: 'Explorar', headerShown: false, gestureEnabled: true }} />
-      <Stack.Screen name="(screens)/clan" options={{ title: 'Clã', headerShown: false, gestureEnabled: true }} />
-      <Stack.Screen name="(public)/[slug]" options={{ title: 'Usuario', headerShown: false, gestureEnabled: true }} />
-      <Stack.Screen name="(screens)/profile" options={{ title: 'Perfil', headerShown: false, gestureEnabled: true }} />
-      <Stack.Screen name="(screens)/feed" options={{ title: 'Feed', headerShown: false, gestureEnabled: true }} />
-      <Stack.Screen name="(screens)/comments/[postId]" options={{ title: 'Comentários', headerShown: false, gestureEnabled: true }} />
-    </Stack>
+    <View style={{ flex: 1 }}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="index" options={{  headerShown: false, gestureEnabled: true }} />
+        <Stack.Screen name="(screens)/explore" options={{ presentation: 'modal', title: 'Explorar', headerShown: false, gestureEnabled: true }} />
+        <Stack.Screen name="(screens)/clan" options={{ title: 'Clã', headerShown: false, gestureEnabled: true }} />
+        <Stack.Screen name="(public)/[slug]" options={{ title: 'Usuario', headerShown: false, gestureEnabled: true }} />
+        <Stack.Screen name="(screens)/profile" options={{ title: 'Perfil', headerShown: false, gestureEnabled: true }} />
+        <Stack.Screen name="(screens)/feed" options={{ title: 'Feed', headerShown: false, gestureEnabled: true }} />
+        <Stack.Screen name="(screens)/comments/[postId]" options={{ title: 'Comentários', headerShown: false, gestureEnabled: true }} />
+      </Stack>
+      <FloatingNavBar />
+    </View>
   );
 }
