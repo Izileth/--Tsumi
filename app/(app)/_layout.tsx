@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { registerForPushNotificationsAsync } from '../lib/notifications';
 import { supabase } from '../lib/supabase';
 import { FloatingNavBar } from '../components/home/FloatingNavBar';
+import { HomeHeader } from '../components/home/HomeHeader';
 import { View } from 'react-native';
 
 export default function AppLayout() {
@@ -31,6 +32,7 @@ export default function AppLayout() {
 
   return (
     <View style={{ flex: 1 }}>
+      <HomeHeader />
       <Stack
         screenOptions={{
           headerShown: false,

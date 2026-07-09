@@ -1,124 +1,67 @@
-import { View, Text, Image } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Profile } from '@/app/lib/types';
+import { View, Text, Image, Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { router, usePathname } from 'expo-router';
+import { useProfile } from '@/app/context/profile-context';
+import { useAuth } from '@/app/context/auth-context';
 
-type HomeHeaderProps = {
-  profile: Profile;
-};
+// Routes where this header should appear
+const VISIBLE_ROUTES = ['/', '/explore', '/clan', '/feed', '/profile'];
 
-export function HomeHeader({ profile }: HomeHeaderProps) {
+export function HomeHeader() {
+  const insets = useSafeAreaInsets();
+  const pathname = usePathname();
+  const { profile } = useProfile();
+  const { loading } = useAuth();
+
+  // Only show on main tab screens and after auth is ready
+  if (loading || !VISIBLE_ROUTES.includes(pathname) || !profile) return null;
+
   return (
-    <View className="relative h-96">
-      {/* Banner de fundo */}
-      {profile.banner_url ? (
-        <Image source={{ uri: profile.banner_url }} className="absolute inset-0 w-full h-full" />
-      ) : (
-        <View className="absolute inset-0 bg-gradient-to-b from-red-950 via-red-900 to-black" />
-      )}
+    <View
+      style={{ paddingTop: insets.top + 8 }}
+      className="flex-row items-center justify-between px-5 pb-4 bg-black border-b border-zinc-900"
+    >
+      {/* Logo / App name */}
+      <Pressable
+        onPress={() => router.replace('/')}
+        className="flex-row items-center gap-2 active:opacity-60"
+      >
+        <View className="w-7 h-7 rounded-full bg-red-600 items-center justify-center">
+          <Text className="text-white text-xs font-black">罪</Text>
+        </View>
+        <Text className="text-white text-base font-bold tracking-wider">tsumi</Text>
+      </Pressable>
 
-      {/* Overlay com gradiente suave que vai escurecendo */}
-      <View className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black" />
-
-      {/* Padrão decorativo japonês sutil */}
-      <View className="absolute inset-0 opacity-5">
-        <Text className="text-red-500 text-9xl text-center mt-8">罪</Text>
+      {/* Rank badge (center) */}
+      <View className="bg-zinc-900 border border-zinc-800 rounded-full px-4 py-1.5 flex-row items-center gap-2">
+        <View className="w-1.5 h-1.5 rounded-full bg-red-500" />
+        <Text className="text-red-400 text-xs font-bold tracking-widest">
+          {profile.rank_jp || '若衆'}
+        </Text>
       </View>
 
-      {/* Conteúdo do Header */}
-      <View className="flex-1 z-50 justify-end pb-6 px-6">
-        {/* Avatar e Info Principal */}
-        <View className="flex-row items-end mb-6">
-          {/* Avatar com borda animada */}
-          <View className="relative">
-            <View className="absolute -inset-1 bg-gradient-to-br from-red-600 via-red-500 to-orange-600 rounded-full blur-sm" />
-
-            {profile.avatar_url ? (
-              <Image
-                source={{ uri: profile.avatar_url }}
-                className="w-28 h-28 rounded-full border-4 border-black relative"
-              />
-            ) : (
-              <View className="w-28 h-28 rounded-full border-4 border-black relative bg-black flex items-center justify-center">
-                <Text className="text-5xl">🐲</Text>
-              </View>
-            )}
-
-            {/* Badge de nível */}
-            <View className="absolute -bottom-2 -right-2 bg-red-600 rounded-full px-3 py-1 border-2 border-black">
-              <Text className="text-white text-xs font-bold">Lv {profile.level || 1}</Text>
-            </View>
+      {/* Avatar → navigates to profile */}
+      <Pressable
+        onPress={() => router.push('/profile' as any)}
+        className="relative active:opacity-60"
+      >
+        {profile.avatar_url ? (
+          <Image
+            source={{ uri: profile.avatar_url }}
+            className="w-9 h-9 rounded-full border-2 border-zinc-800"
+          />
+        ) : (
+          <View className="w-9 h-9 rounded-full bg-zinc-900 border-2 border-zinc-800 items-center justify-center">
+            <Text className="text-lg">🐲</Text>
           </View>
-
-          {/* Nome e Rank */}
-          <View className="flex-1 ml-4 mb-2">
-            <Text className="text-white text-2xl font-bold tracking-tight">{profile.username}</Text>
-            {profile.username_jp && (
-              <Text className="text-red-400 text-lg font-semibold mt-0.5">
-                {profile.username_jp}
-              </Text>
-            )}
-            <View className="flex-row items-center mt-2 gap-2">
-              <View className="bg-red-950/60 px-3 py-1 rounded-full border border-red-800/40">
-                <Text className="text-red-400 text-xs font-bold">{profile.rank_jp || '若衆'}</Text>
-              </View>
-              <Text className="text-neutral-500 text-xs">•</Text>
-              <Text className="text-neutral-400 text-xs">{profile.rank || 'Wakashu'}</Text>
-            </View>
-          </View>
+        )}
+        {/* Level badge */}
+        <View className="absolute -bottom-1 -right-1 bg-red-600 rounded-full w-4 h-4 items-center justify-center border border-black">
+          <Text className="text-white" style={{ fontSize: 8, fontWeight: '900' }}>
+            {profile.level || 1}
+          </Text>
         </View>
-
-        {/* Stats Cards */}
-        <View className="flex-row gap-3">
-          {/* Lealdade */}
-          <View className="flex-1 bg-black/80 backdrop-blur-sm rounded-xl p-3 border border-zinc-800/50">
-            <View className="flex-row items-center justify-between mb-1">
-              <Text className="text-neutral-400 text-xs">Lealdade</Text>
-              <Text className="text-red-500 text-xs">忠</Text>
-            </View>
-            <Text className="text-white text-lg font-bold">{profile.level || 0}</Text>
-            <View className="h-1 bg-zinc-800 rounded-full mt-2 overflow-hidden">
-              <View
-                className="bg-red-600 h-full"
-                style={{ width: `${Math.min(100, profile?.level || 0)}%` }}
-              />
-            </View>
-          </View>
-
-          {/* Clã */}
-          <View className="flex-1 bg-black/80 backdrop-blur-sm rounded-xl p-3 border border-zinc-800/50">
-            <View className="flex-row items-center justify-between mb-1">
-              <Text className="text-neutral-400 text-xs">Clã</Text>
-              <Text className="text-red-500 text-xs">組</Text>
-            </View>
-            <Text className="text-white text-base font-bold" numberOfLines={1}>
-              {profile.clans?.name || 'Sem Clã'}
-            </Text>
-            <Text className="text-neutral-500 text-xs mt-1">
-              {profile.clans?.name ? 'Membro' : 'Independente'}
-            </Text>
-          </View>
-
-          {/* Territórios */}
-          <View className="flex-1 bg-black/80 backdrop-blur-sm rounded-xl p-3 border border-zinc-800/50">
-            <View className="flex-row items-center justify-between mb-1">
-              <Text className="text-neutral-400 text-xs">Insígnia</Text>
-              <Text className="text-red-500 text-xs">地</Text>
-            </View>
-            <Text className="text-white text-lg font-bold">{profile.clans?.emblem || '0'}</Text>
-            <Text className="text-neutral-500 text-xs mt-1">Principal</Text>
-          </View>
-        </View>
-      </View>
-
-      <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.3)', 'rgba(0,0,0,0.8)', '#000000']}
-        locations={[0, 0.5, 0.8, 1]}
-        className="absolute bottom-0 inset-0"
-      />
-      <View className="absolute bottom-0 inset-0 bg-black/30" />
-      {/* Detalhes vermelhos laterais */}
-      <View className="absolute left-0 top-40 w-1 h-32 bg-red-600" />
-      <View className="absolute right-0 top-40 w-1 h-32 bg-red-600" />
+      </Pressable>
     </View>
   );
 }

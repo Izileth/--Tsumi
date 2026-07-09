@@ -1,12 +1,11 @@
 import { CreateProfilePrompt } from '@/app/components/home/CreateProfilePrompt';
 import { HomeContent } from '@/app/components/home/HomeContent';
-import { HomeHeader } from '@/app/components/home/HomeHeader';
-import { PullToRevealSymbol } from '@/app/components/home/PullToRevealSymbol';
 import { KanjiLoader } from '@/components/ui/kanji-loader';
-import { useCallback, useMemo, useState } from 'react';
-import { Animated, RefreshControl, Text, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import { RefreshControl, ScrollView, Text, View } from 'react-native';
 import { useAuth } from '../context/auth-context';
 import { useProfile } from '../context/profile-context';
+
 export default function HomeScreen() {
   const { logout, isOffline } = useAuth();
   const [loggingOut, setLoggingOut] = useState(false);
@@ -21,10 +20,6 @@ export default function HomeScreen() {
       setRefreshing(false);
     }
   }, [refetchProfile]);
-
-
-
-  const scrollY = useMemo(() => new Animated.Value(0), []);
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -51,8 +46,6 @@ export default function HomeScreen() {
     return <CreateProfilePrompt />;
   }
 
-  // If we are offline, the RootLayout will handle the redirection, 
-  // but we return null to avoid rendering partially loaded content
   if (isOffline) {
     return null;
   }
@@ -60,32 +53,27 @@ export default function HomeScreen() {
   const profileData = profile!;
 
   return (
-    <>
-      <View className="flex-1 bg-black">
-        <PullToRevealSymbol scrollY={scrollY} />
+    <View className="flex-1 bg-black">
 
-        <Animated.ScrollView
-          className="flex-1"
-          onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-            useNativeDriver: true,
-          })}
-          scrollEventThrottle={16}
-          bounces={true}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              tintColor="#000"
-              colors={['#000', '#202020']}
-              progressBackgroundColor="#fff"
-            />
-          }
-          showsVerticalScrollIndicator={false}
-        >
-          <HomeHeader profile={profileData} />
-          <HomeContent profile={profileData} handleLogout={handleLogout} loggingOut={loggingOut} />
-        </Animated.ScrollView>
-      </View>
-    </>
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor="#ef4444"
+            colors={['#ef4444']}
+            progressBackgroundColor="#000"
+          />
+        }
+      >
+        <HomeContent
+          profile={profileData}
+          handleLogout={handleLogout}
+          loggingOut={loggingOut}
+        />
+      </ScrollView>
+    </View>
   );
 }
