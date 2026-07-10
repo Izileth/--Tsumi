@@ -14,7 +14,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-const DEFAULT_SNAP_POINT = SCREEN_HEIGHT * 0.85; // 70% of screen height
+const DEFAULT_SNAP_POINT = SCREEN_HEIGHT * 0.9; // 85% of screen height
 
 type AppBottomSheetProps = {
   title?: string;
@@ -29,7 +29,7 @@ export const AppBottomSheet = forwardRef<any, AppBottomSheetProps>(
     const insets = useSafeAreaInsets();
     const [isVisible, setIsVisible] = useState(false);
     const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
-    const currentHeight = useRef(DEFAULT_SNAP_POINT); // Track current height for PanResponder
+    const currentHeight = useRef(DEFAULT_SNAP_POINT);
 
     const animateOpen = useCallback(() => {
       setIsVisible(true);
@@ -61,9 +61,8 @@ export const AppBottomSheet = forwardRef<any, AppBottomSheetProps>(
       PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onMoveShouldSetPanResponder: (_, gestureState) => {
-          // Only allow dragging down from the top part of the sheet
-          // or if the scroll view is at the top and user is dragging down
-          return gestureState.dy > 0 && gestureState.y0 < (SCREEN_HEIGHT - currentHeight.current + 50);
+          // Allow drag only if moving vertically sufficiently
+          return Math.abs(gestureState.dy) > 5;
         },
         onPanResponderMove: (_, gestureState) => {
           if (gestureState.dy > 0) { // Only drag down
@@ -71,7 +70,7 @@ export const AppBottomSheet = forwardRef<any, AppBottomSheetProps>(
           }
         },
         onPanResponderRelease: (_, gestureState) => {
-          if (gestureState.dy > 50) { // If dragged down more than 50 pixels
+          if (gestureState.dy > 50 || gestureState.vy > 0.5) { // Dragged down enough or swiped down fast
             animateClose();
           } else {
             // Snap back to open position
@@ -89,8 +88,20 @@ export const AppBottomSheet = forwardRef<any, AppBottomSheetProps>(
     if (!isVisible) return null;
 
     return (
-      <Modal transparent visible={isVisible} onRequestClose={animateClose}>
-        <Pressable className="flex-1 bg-black/50" onPress={animateClose}>
+      <Modal 
+        transparent 
+        visible={isVisible} 
+        onRequestClose={animateClose}
+        animationType="none"
+        hardwareAccelerated
+      >
+        <Pressable 
+          className="flex-1 bg-black/80" 
+          onPress={animateClose}
+          accessible={true}
+          accessibilityRole="button"
+          accessibilityLabel="Fechar painel inferior"
+        >
           <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{ flex: 1 }}
@@ -102,47 +113,75 @@ export const AppBottomSheet = forwardRef<any, AppBottomSheetProps>(
                 left: 0,
                 right: 0,
                 bottom: 0,
-                width: '100%', // Full width
-                height: DEFAULT_SNAP_POINT + insets.bottom, // Adjust height for safe area
-                backgroundColor: '#000000',
-                borderTopLeftRadius: 20,
-                borderTopRightRadius: 20,
+                width: '100%',
+                height: DEFAULT_SNAP_POINT + insets.bottom,
+                backgroundColor: '#09090b', // zinc-950
+                borderTopColor: '#18181b', // zinc-900
+                borderTopWidth: 1,
+                borderTopLeftRadius: 32,
+                borderTopRightRadius: 32,
                 overflow: 'hidden',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: -2 },
+                shadowOpacity: 0.3,
+                shadowRadius: 10,
+                elevation: 10,
               }}
-              {...panResponder.panHandlers}
+              // Do NOT put panHandlers here, otherwise it blocks ScrollView on Android/iOS
             >
-              {/* Handle Indicator */}
-              <View className="w-full items-center py-3">
-                <View className="w-16 h-1.5 bg-black rounded-full" />
-              </View>
-
-              {/* Header */}
-              {(title || titleJP) && (
-                <View className="border-b border-neutral-800 px-6 pt-4 pb-4">
-                  {titleJP && (
-                    <Text className="text-red-500 text-2xl font-black tracking-wider text-center mb-1">
-                      {titleJP}
-                    </Text>
-                  )}
-                  {title && (
-                    <Text className="text-white text-lg font-semibold text-center">
-                      {title}
-                    </Text>
-                  )}
-                  <View className="flex-row justify-center items-center gap-2 mt-3">
-                    <View className="w-8 h-px bg-red-600" />
-                    <Text className="text-neutral-700 text-xs">龍</Text>
-                    <View className="w-8 h-px bg-red-600" />
-                  </View>
+              {/* Header acts as the drag handle */}
+              <View 
+                {...panResponder.panHandlers} 
+                accessible={true}
+                accessibilityRole="adjustable"
+                accessibilityLabel="Arraste para baixo para fechar"
+              >
+                {/* Handle Indicator */}
+                <View className="w-full items-center py-4">
+                  <View className="w-12 h-1.5 bg-zinc-800 rounded-full" />
                 </View>
-              )}
+
+                {/* Header Title */}
+                {(title || titleJP) && (
+                  <View className="border-b border-zinc-900 px-6 pb-6">
+                    {titleJP && (
+                      <Text 
+                        className="text-red-500 text-3xl font-black tracking-widest text-center mb-1 mt-2"
+                        accessible={true}
+                        accessibilityRole="header"
+                      >
+                        {titleJP}
+                      </Text>
+                    )}
+                    {title && (
+                      <Text 
+                        className="text-white text-xs font-bold text-center uppercase tracking-widest mt-1"
+                        accessible={true}
+                        accessibilityRole="header"
+                      >
+                        {title}
+                      </Text>
+                    )}
+                    <View className="flex-row justify-center items-center gap-3 mt-4" accessible={false} importantForAccessibility="no">
+                      <View className="flex-1 h-px bg-zinc-900" />
+                      <Text className="text-zinc-700 font-black text-sm">龍</Text>
+                      <View className="flex-1 h-px bg-zinc-900" />
+                    </View>
+                  </View>
+                )}
+              </View>
 
               {/* Content */}
               <ScrollView
                 style={{ flex: 1 }}
-                contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: insets.bottom + 20 }}
+                contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: insets.bottom + 24, paddingTop: 16 }}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
               >
-                {children}
+                {/* Wrapped in Pressable to prevent touches from bubbling to the overlay */}
+                <Pressable accessible={false} style={{ flex: 1 }}>
+                  {children}
+                </Pressable>
               </ScrollView>
             </Animated.View>
           </KeyboardAvoidingView>

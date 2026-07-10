@@ -2,7 +2,8 @@ import React, { createContext, useState, useEffect, useCallback, useContext, Rea
 import { supabase } from '../lib/supabase';
 import { useAuth } from './auth-context';
 import type { Profile } from '../lib/types';
-// import * as Notifications from 'expo-notifications';
+import * as FileSystem from 'expo-file-system/legacy';
+import { decode } from 'base64-arraybuffer';
 
 type ProfileContextType = {
   profile: Profile | null;
@@ -85,13 +86,7 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
       const newLevel = data?.level;
 
       if (oldLevel && newLevel && newLevel > oldLevel) {
-        // await Notifications.scheduleNotificationAsync({
-        //   content: {
-        //     title: "Você subiu de nível!",
-        //     body: `Parabéns, você alcançou o nível ${newLevel}!`,
-        //   },
-        //   trigger: null,
-        // });
+        // notification code
       }
 
       setProfile(data as Profile); // Update global state immediately
@@ -111,16 +106,17 @@ export const ProfileProvider = ({ children }: { children: ReactNode }) => {
     const fileName = `${assetType}-${Date.now()}.${fileExt}`;
     const filePath = `users/${user.id}/${fileName}`;
 
-    const formData = new FormData();
-    formData.append('file', {
-      uri: file.uri,
-      name: fileName,
-      type: file.type || `image/${fileExt}`,
-    } as any);
+    // Fix for "unsupported FormDataPart implementation": 
+    // Use expo-file-system to read as Base64 and decode to ArrayBuffer for Supabase Storage
+    const base64 = await FileSystem.readAsStringAsync(file.uri, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    const arrayBuffer = decode(base64);
 
     const { error: uploadError } = await supabase.storage
       .from('assets')
-      .upload(filePath, formData, {
+      .upload(filePath, arrayBuffer, {
+        contentType: file.type || `image/${fileExt}`,
         cacheControl: '3600',
         upsert: true,
       });

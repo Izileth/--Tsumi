@@ -8,6 +8,8 @@ import { useProfile } from '@/app/context/profile-context';
 import { useAuth } from '@/app/context/auth-context';
 import type { Profile } from '@/app/lib/types';
 import Toast from 'react-native-toast-message';
+import { Image as ImageIcon } from 'lucide-react-native';
+
 type EditProfileSheetProps = {};
 
 const formatJapaneseName = (name: string | string[] | null | undefined): string => {
@@ -78,7 +80,7 @@ export const EditProfileSheet = memo(forwardRef<any, EditProfileSheetProps>((pro
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: true,
       aspect: type === 'avatar' ? [1, 1] : [16, 9],
       quality: 0.8,
@@ -164,65 +166,212 @@ export const EditProfileSheet = memo(forwardRef<any, EditProfileSheetProps>((pro
         title="Edição de Perfil"
         titleJP="プロファイル編集"
       >
-        <Text className="text-white font-bold text-lg mb-4 mt-6">Imagens</Text>
-        <View className="flex-row justify-around mb-6">
-          <Pressable onPress={() => handlePickImage('avatar')} className="items-center">
-            <Image source={{ uri: editAvatarUrl || undefined }} className="w-24 h-24 rounded-full bg-black border-2 border-zinc-900 mb-2" />
-            <Text className="text-red-400">Alterar Avatar</Text>
-          </Pressable>
-          <Pressable onPress={() => handlePickImage('banner')} className="items-center">
-            <Image source={{ uri: editBannerUrl || undefined }} className="w-40 h-24 rounded-lg bg-black border-2 border-zinc-900 mb-2" />
-            <Text className="text-red-400">Alterar Banner</Text>
-          </Pressable>
-        </View>
+        <View className="gap-6 mt-4">
+          
+          {/* Sessão de Imagens */}
+          <View>
+            <Text 
+              className="text-white font-black text-lg mb-4 tracking-tight"
+              accessibilityRole="header"
+            >
+              Imagens e Aparência
+            </Text>
+            
+            <View className="flex-row justify-around mb-2">
+              <Pressable 
+                onPress={() => handlePickImage('avatar')} 
+                className="items-center active:opacity-60"
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel="Alterar Imagem de Avatar"
+              >
+                <View className="relative mb-3">
+                  <Image source={{ uri: editAvatarUrl || undefined }} className="w-24 h-24 rounded-3xl bg-zinc-950 border border-zinc-800" />
+                  <View className="absolute -bottom-2 -right-2 w-8 h-8 bg-zinc-900 border border-zinc-700 rounded-full items-center justify-center">
+                    <ImageIcon size={14} color="#a1a1aa" />
+                  </View>
+                </View>
+                <Text className="text-zinc-400 font-bold text-xs uppercase tracking-widest">Avatar</Text>
+              </Pressable>
 
-        <Text className="text-white font-bold text-lg mb-4">Informações Públicas</Text>
-        <View className="mb-4">
-          <Text className="text-neutral-400 mb-2">Nome de Usuário</Text>
-          <TextInput className="bg-black text-white p-3 rounded-lg border-zinc-900" value={editUsername} onChangeText={setEditUsername} />
-        </View>
-        <View className="mb-4">
-          <Text className="text-neutral-400 mb-2">Bio</Text>
-          <TextInput className="bg-black text-white p-3 rounded-lg border-zinc-900 h-24" value={editBio} onChangeText={setEditBio} multiline textAlignVertical="top" />
-        </View>
-        <View className="mb-6">
-          <Text className="text-neutral-400 mb-2">Slug</Text>
-          <TextInput className="bg-black text-white p-3 rounded-lg border-zinc-900" value={editSlug} onChangeText={handleSlugChange} autoCapitalize="none" />
-          <Text className="text-neutral-500 text-xs mt-2">Será formatado como URL. Apenas letras minúsculas, números e hífens.</Text>
-        </View>
+              <Pressable 
+                onPress={() => handlePickImage('banner')} 
+                className="items-center active:opacity-60"
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel="Alterar Imagem de Banner"
+              >
+                <View className="relative mb-3">
+                  <Image source={{ uri: editBannerUrl || undefined }} className="w-40 h-24 rounded-2xl bg-zinc-950 border border-zinc-800" />
+                  <View className="absolute -bottom-2 -right-2 w-8 h-8 bg-zinc-900 border border-zinc-700 rounded-full items-center justify-center">
+                    <ImageIcon size={14} color="#a1a1aa" />
+                  </View>
+                </View>
+                <Text className="text-zinc-400 font-bold text-xs uppercase tracking-widest">Banner</Text>
+              </Pressable>
+            </View>
+          </View>
 
-        <Text className="text-white font-bold text-lg mb-4">Links Sociais</Text>
-        <View className="mb-4">
-          <Text className="text-neutral-400 mb-2">Website</Text>
-          <TextInput className="bg-black text-white p-3 rounded-lg border-zinc-900" value={editWebsite} onChangeText={setEditWebsite} placeholder="https://seu-site.com" placeholderTextColor="#666" autoCapitalize="none" keyboardType="url" />
+          <View className="h-px bg-zinc-900 my-2" />
+
+          {/* Informações Públicas */}
+          <View className="gap-5">
+            <Text 
+              className="text-white font-black text-lg mb-1 tracking-tight"
+              accessibilityRole="header"
+            >
+              Informações Públicas
+            </Text>
+            
+            <View>
+              <View className="flex-row items-center mb-2">
+                <View className="w-1 h-4 bg-red-600 mr-2" />
+                <Text className="text-neutral-400 text-xs font-bold tracking-widest uppercase">Nome de Usuário</Text>
+              </View>
+              <View className="bg-black border-l-2 border-red-900/30 rounded-xl overflow-hidden">
+                <TextInput 
+                  className="px-4 py-3.5 text-white font-bold" 
+                  value={editUsername} 
+                  onChangeText={setEditUsername} 
+                  accessible={true}
+                  accessibilityLabel="Campo de entrada para o nome de usuário"
+                />
+              </View>
+            </View>
+
+            <View>
+              <View className="flex-row items-center mb-2">
+                <View className="w-1 h-4 bg-red-600 mr-2" />
+                <Text className="text-neutral-400 text-xs font-bold tracking-widest uppercase">Nome Japonês</Text>
+              </View>
+              <Pressable 
+                onPress={handlePresentJapaneseNameModal} 
+                className="bg-black border-l-2 border-red-900/30 rounded-xl px-4 py-3 min-h-[50px] justify-center active:opacity-60"
+                accessible={true}
+                accessibilityRole="button"
+                accessibilityLabel="Botão para editar seu nome japonês"
+              >
+                <Text className="text-white text-xl font-black tracking-widest">
+                  {formatJapaneseName(editJapaneseName) || "NOME JAPONÊS VAZIO"}
+                </Text>
+              </Pressable>
+            </View>
+
+            <View>
+              <View className="flex-row items-center mb-2">
+                <View className="w-1 h-4 bg-red-600 mr-2" />
+                <Text className="text-neutral-400 text-xs font-bold tracking-widest uppercase">Biografia</Text>
+              </View>
+              <View className="bg-black border-l-2 border-red-900/30 rounded-xl overflow-hidden">
+                <TextInput 
+                  className="px-4 py-3.5 text-white h-24" 
+                  value={editBio} 
+                  onChangeText={setEditBio} 
+                  multiline 
+                  textAlignVertical="top"
+                  accessible={true}
+                  accessibilityLabel="Campo de entrada para a sua biografia"
+                />
+              </View>
+            </View>
+            
+            <View>
+              <View className="flex-row items-center mb-2">
+                <View className="w-1 h-4 bg-red-600 mr-2" />
+                <Text className="text-neutral-400 text-xs font-bold tracking-widest uppercase">Slug (URL)</Text>
+              </View>
+              <View className="bg-black border-l-2 border-red-900/30 rounded-xl overflow-hidden">
+                <TextInput 
+                  className="px-4 py-3.5 text-white" 
+                  value={editSlug} 
+                  onChangeText={handleSlugChange} 
+                  autoCapitalize="none" 
+                  accessible={true}
+                  accessibilityLabel="Campo de entrada para o slug da URL do perfil"
+                />
+              </View>
+              <Text className="text-zinc-600 text-[10px] uppercase font-bold tracking-widest mt-2 ml-1">Letras minúsculas e hífens. Ex: meu-perfil</Text>
+            </View>
+          </View>
+
+          <View className="h-px bg-zinc-900 my-2" />
+
+          {/* Links Sociais */}
+          <View className="gap-5">
+            <Text 
+              className="text-white font-black text-lg mb-1 tracking-tight"
+              accessibilityRole="header"
+            >
+              Links Sociais
+            </Text>
+            
+            <View>
+              <View className="flex-row items-center mb-2">
+                <View className="w-1 h-4 bg-red-600 mr-2" />
+                <Text className="text-neutral-400 text-xs font-bold tracking-widest uppercase">Website</Text>
+              </View>
+              <View className="bg-black border-l-2 border-red-900/30 rounded-xl overflow-hidden">
+                <TextInput 
+                  className="px-4 py-3.5 text-white" 
+                  value={editWebsite} 
+                  onChangeText={setEditWebsite} 
+                  placeholder="https://seu-site.com" 
+                  placeholderTextColor="#52525b" 
+                  autoCapitalize="none" 
+                  keyboardType="url" 
+                  accessible={true}
+                  accessibilityLabel="Campo de entrada para o link do seu website"
+                />
+              </View>
+            </View>
+
+            <View>
+              <View className="flex-row items-center mb-2">
+                <View className="w-1 h-4 bg-red-600 mr-2" />
+                <Text className="text-neutral-400 text-xs font-bold tracking-widest uppercase">GitHub</Text>
+              </View>
+              <View className="bg-black border-l-2 border-red-900/30 rounded-xl overflow-hidden">
+                <TextInput 
+                  className="px-4 py-3.5 text-white" 
+                  value={editGithubUsername} 
+                  onChangeText={setEditGithubUsername} 
+                  placeholder="seu-usuario" 
+                  placeholderTextColor="#52525b" 
+                  autoCapitalize="none" 
+                  accessible={true}
+                  accessibilityLabel="Campo de entrada para o nome de usuário do GitHub"
+                />
+              </View>
+            </View>
+
+            <View>
+              <View className="flex-row items-center mb-2">
+                <View className="w-1 h-4 bg-red-600 mr-2" />
+                <Text className="text-neutral-400 text-xs font-bold tracking-widest uppercase">Twitter / X</Text>
+              </View>
+              <View className="bg-black border-l-2 border-red-900/30 rounded-xl overflow-hidden">
+                <TextInput 
+                  className="px-4 py-3.5 text-white" 
+                  value={editTwitterUsername} 
+                  onChangeText={setEditTwitterUsername} 
+                  placeholder="seu-usuario" 
+                  placeholderTextColor="#52525b" 
+                  autoCapitalize="none" 
+                  accessible={true}
+                  accessibilityLabel="Campo de entrada para o nome de usuário do Twitter"
+                />
+              </View>
+            </View>
+          </View>
+
+          <CustomButton
+            title="SALVAR ALTERAÇÕES"
+            onPress={handleSave}
+            isLoading={saving}
+            className="w-full bg-red-600 border border-red-500 py-3.5 rounded-xl mb-12 mt-4"
+            textClassName="text-sm text-white font-black tracking-widest"
+          />
         </View>
-
-        <View className="mb-4">
-          <Text className="text-neutral-400 mb-2">GitHub</Text>
-          <TextInput className="bg-black text-white p-3 rounded-lg border-zinc-900" value={editGithubUsername} onChangeText={setEditGithubUsername} placeholder="seu-usuario" placeholderTextColor="#666" autoCapitalize="none" />
-        </View>
-
-
-        <View className="mb-6">
-          <Text className="text-neutral-400 mb-2">Twitter / X</Text>
-          <TextInput className="bg-black text-white p-3 rounded-lg border-zinc-900" value={editTwitterUsername} onChangeText={setEditTwitterUsername} placeholder="seu-usuario" placeholderTextColor="#666" autoCapitalize="none" />
-        </View>
-
-
-        <View className="mb-6">
-          <Text className="text-neutral-400 mb-2">Nome Japonês</Text>
-          <Pressable onPress={handlePresentJapaneseNameModal} className="bg-black p-3 rounded-lg border border-zinc-900 flex-row justify-center items-center min-h-[50px]">
-            <Text className="text-white text-2xl tracking-widest">{formatJapaneseName(editJapaneseName)}</Text>
-          </Pressable>
-        </View>
-
-        <CustomButton
-          title="Salvar Alterações"
-          onPress={handleSave}
-          isLoading={saving}
-          className="w-full bg-red-900/20 border py-3 rounded-sm mb-32 border-red-800"
-          textClassName="text-sm text-zinc-50 font-bold"
-        />
       </AppBottomSheet>
       <EditJapaneseNameSheet
         ref={japaneseNameSheetRef}
