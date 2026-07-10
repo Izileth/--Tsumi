@@ -1,141 +1,83 @@
+import React from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link, useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { router, usePathname } from 'expo-router';
 import { useProfile } from '@/app/context/profile-context';
+import { useAuth } from '@/app/context/auth-context';
 import { Feather } from '@expo/vector-icons';
+
+// Routes where this global header should appear
+const VISIBLE_ROUTES = ['/', '/explore', '/clan', '/feed', '/profile'];
+
 export default function GlobalHeader() {
-  const { profile, loading } = useProfile();
-  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const pathname = usePathname();
+  const { profile } = useProfile();
+  const { loading } = useAuth();
+
+  // Only show on main tab screens and after auth is ready
+  if (loading || !VISIBLE_ROUTES.includes(pathname) || !profile) return null;
 
   return (
-    <SafeAreaView className="bg-black" edges={['top']}>
-      {/* Header Principal */}
-      <View className="h-16 flex-row items-center justify-between px-6">
-        {/* Logo */}
-        <Link href="/(app)" asChild>
-          <Pressable className="flex-row items-center gap-2">
-            {({ pressed }) => (
-              <View className={`${pressed ? 'opacity-80' : ''} flex-row items-center justify-center`}>
-                <Image
-                  source={require("../../../assets/images/notification_icon.png")}
-                  className="w-10 h-10"
-                  resizeMode="contain"
-                />
-                <Text className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
-                  Tsumi
-                </Text>
-              </View>
-            )}
-          </Pressable>
-        </Link>
-
-        {/* Navegação Central - Desktop */}
-        <View className="hidden md:flex flex-row items-center gap-1">
-          <Link href="/(app)/(screens)/explore" asChild>
-            <Pressable className="flex-col items-center justify-center px-4 py-2">
-              {({ pressed }) => (
-                <>
-                  <Feather name="compass" size={20} color={pressed ? '#9ca3af' : '#6b7280'} />
-                  <Text className={`text-xs mt-1 font-medium ${pressed ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                    Explorar
-                  </Text>
-                </>
-              )}
-            </Pressable>
-          </Link>
-          <Link href="/(app)/(screens)/feed" asChild>
-            <Pressable className="flex-col items-center justify-center px-4 py-2">
-              {({ pressed }) => (
-                <>
-                  <Feather name="home" size={20} color={pressed ? '#9ca3af' : '#6b7280'} />
-                  <Text className={`text-xs mt-1 font-medium ${pressed ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                    Feed
-                  </Text>
-                </>
-              )}
-            </Pressable>
-          </Link>
-          <Link href="/(app)/(screens)/clan" asChild>
-            <Pressable className="flex-col items-center justify-center px-4 py-2">
-              {({ pressed }) => (
-                <>
-                  <Feather name="users" size={20} color={pressed ? '#9ca3af' : '#6b7280'} />
-                  <Text className={`text-xs mt-1 font-medium ${pressed ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                    Clã
-                  </Text>
-                </>
-              )}
-            </Pressable>
-          </Link>
-        </View>
-
-        {/* Ações à Direita */}
-        <View className="flex-row items-center gap-3">
-          <Link href="/(app)/(screens)/explore" asChild>
-            <Pressable className="flex-col items-center justify-center px-0 py-2">
-              {({ pressed }) => (
-                <>
-                  <Feather name="compass" size={20} color={pressed ? '#9ca3af' : '#6b7280'} />
-                  <Text className={`text-xs mt-1 font-medium ${pressed ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                    Explorar
-                  </Text>
-                </>
-              )}
-            </Pressable>
-          </Link>
-          <Link href="/(app)/(screens)/feed" asChild>
-            <Pressable className="flex-col items-center justify-center px-0 py-2">
-              {({ pressed }) => (
-                <>
-                  <Feather name="home" size={20} color={pressed ? '#9ca3af' : '#6b7280'} />
-                  <Text className={`text-xs mt-1 font-medium ${pressed ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                    Feed
-                  </Text>
-                </>
-              )}
-            </Pressable>
-          </Link>
-          <Link href="/(app)/(screens)/clan" asChild>
-            <Pressable className="flex-col items-center justify-center px-4 py-2">
-              {({ pressed }) => (
-                <>
-                  <Feather name="users" size={20} color={pressed ? '#9ca3af' : '#6b7280'} />
-                  <Text className={`text-xs mt-1 font-medium ${pressed ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                    Clã
-                  </Text>
-                </>
-              )}
-            </Pressable>
-          </Link>
-
-          {/* Avatar do Usuário */}
-          <Pressable
-            onPress={() => router.push('/(app)/(screens)/profile')}
-            className="relative"
-          >
-            {({ pressed }) => (
-              <View className={`${pressed ? 'opacity-80' : ''}`}>
-                {loading ? (
-                  <View className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700" />
-                ) : profile?.avatar_url ? (
-                  <Image
-                    source={{ uri: profile.avatar_url }}
-                    className="w-9 h-9 rounded-full border-2 border-gray-200 dark:border-gray-700"
-                  />
-                ) : (
-                  <View className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 items-center justify-center">
-                    <Feather name="user" size={18} color="white" />
-                  </View>
-                )}
-                {/* Indicador Online */}
-                <View className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-zinc-50 border-2 border-white dark:border-gray-950" />
-              </View>
-            )}
-          </Pressable>
-        </View>
+    <View
+      style={{ paddingTop: Math.max(insets.top, 16) }}
+      className="flex-row items-center justify-between px-5 pb-3 bg-black border-b border-zinc-900/80"
+    >
+      {/* Left: Avatar & Level (like Twitter/X / Bybit) */}
+      <View className="flex-1 items-start">
+        <Pressable
+          onPress={() => router.push('/(app)/(screens)/profile')}
+          className="relative active:opacity-70"
+        >
+          {profile.avatar_url ? (
+            <Image
+              source={{ uri: profile.avatar_url }}
+              className="w-10 h-10 rounded-full border-[1.5px] border-zinc-800"
+            />
+          ) : (
+            <View className="w-10 h-10 rounded-full bg-zinc-900 border-[1.5px] border-zinc-800 items-center justify-center">
+              <Text className="text-lg">🐲</Text>
+            </View>
+          )}
+          {/* Level badge */}
+          <View className="absolute -bottom-1 -right-1 bg-red-600 rounded-full min-w-[16px] h-4 items-center justify-center border border-neutral-950 px-1">
+            <Text className="text-white" style={{ fontSize: 9, fontWeight: '900' }}>
+              {profile.level || 1}
+            </Text>
+          </View>
+        </Pressable>
       </View>
 
+      {/* Center: App Logo (like Instagram / X) */}
+      <View className="flex-1 items-center">
+        <Pressable
+          onPress={() => router.replace('/')}
+          className="flex-row items-center justify-center gap-1.5 active:opacity-70"
+        >
+          <View className="w-8 h-8 rounded-lg bg-red-600 items-center justify-center transform rotate-3 shadow-sm shadow-red-600/50">
+            <Text className="text-white text-sm font-black">罪</Text>
+          </View>
+          <Text className="text-white text-lg font-black tracking-widest uppercase mt-1">
+            tsumi
+          </Text>
+        </Pressable>
+      </View>
 
-    </SafeAreaView>
+      {/* Right: Rank Pill & Actions (like Bybit) */}
+      <View className="flex-1 flex-row items-center justify-end gap-3">
+        <View className="bg-zinc-900 border border-zinc-800/80 rounded-full px-2.5 py-1 flex-row items-center gap-1.5">
+          <View className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-sm shadow-red-500" />
+          <Text className="text-red-400 text-[10px] font-bold tracking-widest uppercase">
+            {profile.rank_jp || '若衆'}
+          </Text>
+        </View>
+
+        <Pressable className="active:opacity-70 relative p-1">
+          <Feather name="bell" size={22} color="#f4f4f5" />
+          {/* Unread indicator dot */}
+          <View className="absolute top-1 right-1.5 w-2 h-2 rounded-full bg-red-500 border border-neutral-950" />
+        </Pressable>
+      </View>
+    </View>
   );
 }

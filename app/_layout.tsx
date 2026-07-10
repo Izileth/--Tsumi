@@ -77,7 +77,7 @@ const RootLayoutNav = () => {
 
       {/* The splash screen is an overlay that fades out, it no longer replaces the Slot */}
       {!isAppReady && (
-        <Animated.View style={[{ flex: 1, position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1 }, animatedStyle]}>
+        <Animated.View style={[{ flex: 1, position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999, elevation: 999 }, animatedStyle]}>
           <LoadingScreen onAnimationEnd={() => setSplashAnimationFinished(true)} />
         </Animated.View>
       )}
