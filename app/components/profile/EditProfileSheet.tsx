@@ -166,7 +166,7 @@ export const EditProfileSheet = memo(forwardRef<any, EditProfileSheetProps>((pro
         title="Edição de Perfil"
         titleJP="プロファイル編集"
       >
-        <View className="gap-6 mt-4">
+        <View className="gap-6 mt-4 mb-18">
           
           {/* Sessão de Imagens */}
           <View>

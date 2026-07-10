@@ -65,7 +65,7 @@ export function ProfileForm({
   onEditJapaneseName,
 }: ProfileFormProps) {
   return (
-    <>
+    <View className="px-5">
       <Text className="text-white font-bold text-lg mb-4">Informações Públicas</Text>
       <View className="mb-4">
         <Text className="text-neutral-400 mb-2">Nome de Usuário</Text>
@@ -166,6 +166,6 @@ export function ProfileForm({
           </Text>
         </Pressable>
       </View>
-    </>
+    </View>
   );
 }
