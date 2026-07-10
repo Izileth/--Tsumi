@@ -17,25 +17,19 @@ export function ProfileSocialLinks({ profile, isOwner, onEdit }: SocialLinksProp
             url: profile.website_url,
             label: 'Website',
             icon: 'globe',
-            color: '#ffffff',
-            bgColor: 'bg-black',
-            borderColor: 'border-zinc-900',
+            color: '#d4d4d8', // zinc-300
         },
         {
             url: profile.github_handle,
             label: 'GitHub',
             icon: 'github',
-            color: '#ffffff',
-            bgColor: 'bg-black',
-            borderColor: 'border-zinc-900',
+            color: '#d4d4d8',
         },
         {
             url: profile.twitter_handle,
             label: 'Twitter',
             icon: 'twitter',
-            color: '#ffffff',
-            bgColor: 'bg-black',
-            borderColor: 'border-zinc-900',
+            color: '#d4d4d8',
         },
     ].filter(link => link.url); // Remove links vazios
 
@@ -56,38 +50,35 @@ export function ProfileSocialLinks({ profile, isOwner, onEdit }: SocialLinksProp
     };
 
     return (
-        <View className="bg-black rounded-xl p-4 mb-4">
-            <View className="flex-row items-center justify-between mb-3">
-                <View className="flex-row items-center">
-                    <View className="w-1 h-4 bg-red-600 rounded-full mr-2" />
-                    <Text className="text-red-500 font-bold text-sm tracking-wider">REDES SOCIAIS</Text>
-                </View>
+        <View className="bg-zinc-950 border border-zinc-900 rounded-2xl p-4 mb-4">
+            <View className="flex-row items-center justify-between mb-4">
+                <Text className="text-zinc-600 font-bold text-[10px] tracking-widest uppercase">REDES SOCIAIS</Text>
                 {isOwner && onEdit && (
-                    <Pressable onPress={onEdit} className="active:opacity-70 p-1">
-                        <FontAwesome name="pencil" size={14} color="#737373" />
+                    <Pressable onPress={onEdit} className="active:opacity-60 p-2 bg-zinc-900 rounded-lg border border-zinc-800">
+                        <FontAwesome name="pencil" size={10} color="#a1a1aa" />
                     </Pressable>
                 )}
             </View>
-            <View className="flex-row w-full max-w-full justify-between items-center flex-wrap gap-2">
+            <View className="flex-row w-full flex-wrap gap-2">
                 {socialLinks.map((link, index) => (
                     <Pressable
                         key={index}
                         onPress={() => handleLinkPress(link.url!)}
-                        className="active:opacity-70 active:scale-95"
+                        className="active:opacity-60 active:scale-95"
                     >
-                        <View className={`${link.bgColor} border ${link.borderColor} rounded-lg px-4 py-3 flex-row items-center min-w-[140px]`}>
-                            <View className="mr-3">
-                                <FontAwesome name={link.icon as any} size={18} color={link.color} />
+                        <View className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 flex-row items-center min-w-[140px]">
+                            <View className="w-8 h-8 rounded-full bg-zinc-950 items-center justify-center border border-zinc-800 mr-3">
+                                <FontAwesome name={link.icon as any} size={14} color={link.color} />
                             </View>
                             <View className="flex-1">
-                                <Text className="text-neutral-400 text-xs font-semibold mb-0.5">
+                                <Text className="text-zinc-500 text-[10px] font-bold mb-0.5 tracking-wider">
                                     {link.label.toUpperCase()}
                                 </Text>
                                 <View className="flex-row items-center">
-                                    <Text className="text-white text-sm font-bold">
+                                    <Text className="text-white text-xs font-black tracking-tight">
                                         Visitar
                                     </Text>
-                                    <FontAwesome name="external-link" size={10} color="#737373" style={{ marginLeft: 6 }} />
+                                    <FontAwesome name="external-link" size={8} color="#71717a" style={{ marginLeft: 6 }} />
                                 </View>
                             </View>
                         </View>

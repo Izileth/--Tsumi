@@ -33,16 +33,13 @@ export function TerritoriesTab({ territories, loading, isOwner, onAdd, onEdit }:
   };
 
   return (
-    <View className="mb max-w-full">
-      {/* Header */}
-      <View className="flex-row items-center mb-4">
-        <Text className="text-red-500 text-base font-bold">縄張り</Text>
-        <View className="flex-1 h-px bg-neutral-800 ml-3" />
-      </View>
-
+    <View className="mb-8 max-w-full">
       {/* Informação contextual */}
-      <View className="bg-red-950/20 border-l-4 border-red-600 p-4 rounded-r-lg mb-5">
-        <Text className="text-neutral-400 text-xs leading-5">
+      <View className="bg-zinc-950 border border-zinc-900 rounded-2xl p-4 mb-6">
+        <Text className="text-white text-lg font-black mb-1 tracking-tight">
+          縄張り (Territórios)
+        </Text>
+        <Text className="text-zinc-500 text-sm leading-5">
           Territórios sob controle do clã geram recursos e prestígio. 
           Expanda estrategicamente para dominar o mapa.
         </Text>
@@ -50,30 +47,28 @@ export function TerritoriesTab({ territories, loading, isOwner, onAdd, onEdit }:
 
       {/* Cards de estatísticas */}
       {territories.length > 0 && (
-        <View className="flex-row flex-wrap gap-2 mb-5">
-          <View className="flex-1 min-w-[45%] bg-black border border-red-900/50 rounded-lg p-3">
-            <View className="flex-row items-center mb-1">
-              <FontAwesome name="map-marker" size={14} color="#ef4444" />
-              <Text className="text-red-400 text-xs ml-2">Territórios</Text>
-            </View>
-            <Text className="text-red-500 text-2xl font-bold">{stats.total}</Text>
+        <View className="flex-row flex-wrap gap-2 mb-6">
+          <View className="flex-1 min-w-[45%] bg-zinc-950 border border-zinc-900 rounded-2xl p-4 items-center">
+            <Text className="text-red-600 text-xs font-bold mb-1">地</Text>
+            <Text className="text-white text-xl font-black">{stats.total}</Text>
+            <Text className="text-zinc-600 text-[10px] uppercase tracking-wider mt-0.5">Controlados</Text>
           </View>
         </View>
       )}
 
       {/* Lista de territórios */}
       {territories.length === 0 ? (
-        <View className="bg-neutral-900/30 border border-neutral-800 rounded-lg p-8 items-center mb-4">
-          <FontAwesome name="map-o" size={40} color="#525252" />
-          <Text className="text-neutral-500 text-sm mt-3 text-center">
-            Nenhum território conquistado ainda
+        <View className="bg-zinc-950 border border-zinc-900 rounded-2xl p-8 items-center mb-4">
+          <Text className="text-4xl mb-3">無</Text>
+          <Text className="text-white font-bold mb-1">
+            Nenhum território conquistado
           </Text>
-          <Text className="text-neutral-600 text-xs mt-2 text-center">
-            {isOwner ? 'Clique no botão abaixo para expandir' : 'Aguarde o líder expandir o domínio'}
+          <Text className="text-zinc-500 text-xs text-center">
+            {isOwner ? 'Use o botão abaixo para expandir' : 'Aguarde o líder expandir o domínio'}
           </Text>
         </View>
       ) : (
-        <View className="space-y-3 gap-3">
+        <View className="space-y-3">
           {territories.map((territory) => {
             const isExpanded = expandedId === territory.id;
 
@@ -81,40 +76,40 @@ export function TerritoriesTab({ territories, loading, isOwner, onAdd, onEdit }:
               <Pressable
                 key={territory.id}
                 onPress={() => toggleExpand(territory.id)}
-                className="active:opacity-80"
+                className="active:opacity-60 mb-3"
               >
-                <View className="bg-black border  border-zinc-900 rounded-lg overflow-hidden">
+                <View className="bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden">
                   {/* Header compacto */}
                   <View className="p-4 flex-row items-center justify-between">
                     <View className="flex-1 mr-3">
-                      <View className="flex-row items-center mb-1">
-                        <FontAwesome name="map-marker" size={12} color="#ef4444" />
-                        <Text className="text-white text-base font-bold ml-2">
+                      <View className="flex-row items-center">
+                        <Text className="text-white text-base font-black tracking-tight">
                           {territory.name}
                         </Text>
                       </View>
-                 
                     </View>
 
                     {/* Ícone de expand */}
-                    <FontAwesome 
-                      name={isExpanded ? "chevron-up" : "chevron-down"} 
-                      size={14} 
-                      color="#737373" 
-                    />
+                    <View className="w-8 h-8 rounded-full bg-zinc-900 items-center justify-center border border-zinc-800">
+                      <FontAwesome 
+                        name={isExpanded ? "chevron-up" : "chevron-down"} 
+                        size={12} 
+                        color="#71717a" 
+                      />
+                    </View>
                   </View>
 
                   {/* Conteúdo expandido */}
                   {isExpanded && (
-                    <View className="px-4 pb-4 border-t border-zinc-900">
-                      <View className="mt-3 space-y-3">
+                    <View className="px-4 pb-4 border-t border-zinc-900/50 mt-1 pt-3">
+                      <View className="space-y-3">
                         {/* Descrição */}
                         {territory.description && (
-                          <View className='mb-4'>
-                            <Text className="text-neutral-500 text-xs font-semibold mb-1.5">
+                          <View className="mb-3">
+                            <Text className="text-zinc-600 text-[10px] font-bold tracking-widest uppercase mb-1">
                               DESCRIÇÃO
                             </Text>
-                            <Text className="text-neutral-400 text-sm leading-5">
+                            <Text className="text-zinc-400 text-xs leading-5">
                               {territory.description}
                             </Text>
                           </View>
@@ -123,12 +118,11 @@ export function TerritoriesTab({ territories, loading, isOwner, onAdd, onEdit }:
                         {/* Botão de gerenciar (apenas para owner) */}
                         {isOwner && (
                           <Pressable
-                            className="active:opacity-70 mt-2"
+                            className="active:opacity-60 mt-1"
                             onPress={() => onEdit(territory)}
                           >
-                            <View className="bg-red-600 rounded-lg py-3 items-center flex-row justify-center">
-                              <FontAwesome name="cog" size={14} color="white" />
-                              <Text className="text-white font-bold text-sm ml-2">
+                            <View className="bg-red-600 rounded-xl py-3 items-center flex-row justify-center border border-red-500">
+                              <Text className="text-white font-black text-xs uppercase tracking-widest">
                                 GERENCIAR TERRITÓRIO
                               </Text>
                             </View>
@@ -146,11 +140,10 @@ export function TerritoriesTab({ territories, loading, isOwner, onAdd, onEdit }:
 
       {/* Botão de expansão */}
       {isOwner && (
-        <Pressable className="active:opacity-70 mt-4" onPress={onAdd}>
-          <View className="bg-red-950/20 border border-red-900/50 rounded-lg py-4 items-center flex-row justify-center">
-            <FontAwesome name="plus-circle" size={16} color="#ef4444" />
-            <Text className="text-red-500 font-bold text-sm ml-2">
-              EXPANDIR PARA NOVO TERRITÓRIO
+        <Pressable className="active:opacity-60 mt-2" onPress={onAdd}>
+          <View className="bg-zinc-950 border border-zinc-900 rounded-2xl py-4 items-center flex-row justify-center">
+            <Text className="text-zinc-400 font-black text-xs uppercase tracking-widest">
+              + EXPANDIR DOMÍNIO
             </Text>
           </View>
         </Pressable>

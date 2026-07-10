@@ -12,46 +12,46 @@ type EventsTabProps = {
 };
 
 const EventIcon = ({ type }: { type: string }) => {
-  const iconMap: { [key: string]: any } = {
-    new_member: { name: 'user-plus', color: '#34d399' },
-    mission_created: { name: 'plus-circle', color: '#34d399' },
-    mission_completed: { name: 'check-circle', color: '#60a5fa' },
-    territory_annexed: { name: 'plus-circle', color: '#34d399' },
-    territory_updated: { name: 'pencil', color: '#fb923c' },
-    territory_detached: { name: 'minus-circle', color: '#f87171' },
-    default: { name: 'history', color: '#9ca3af' },
+  const iconMap: { [key: string]: { kanji: string; color: string } } = {
+    new_member: { kanji: '新', color: 'text-emerald-500' },
+    mission_created: { kanji: '命', color: 'text-emerald-500' },
+    mission_completed: { kanji: '了', color: 'text-blue-500' },
+    territory_annexed: { kanji: '占', color: 'text-emerald-500' },
+    territory_updated: { kanji: '改', color: 'text-orange-500' },
+    territory_detached: { kanji: '捨', color: 'text-red-500' },
+    default: { kanji: '事', color: 'text-zinc-500' },
   };
-  const { name, color } = iconMap[type] || iconMap.default;
-  return <FontAwesome name={name} size={18} color={color} />;
+  const { kanji, color } = iconMap[type] || iconMap.default;
+  return <Text className={`${color} text-lg font-black`}>{kanji}</Text>;
 };
 
 const EventTypeLabel = ({ type }: { type: string }) => {
   const labelMap: { [key: string]: { text: string; bgColor: string; textColor: string } } = {
-    new_member: { text: 'Novo Membro', bgColor: 'bg-emerald-900/30', textColor: 'text-emerald-400' },
-    mission_created: { text: 'Missão Criada', bgColor: 'bg-emerald-900/30', textColor: 'text-emerald-400' },
-    mission_completed: { text: 'Completada', bgColor: 'bg-blue-900/30', textColor: 'text-blue-400' },
+    new_member: { text: 'Novo Membro', bgColor: 'bg-emerald-950/50', textColor: 'text-emerald-500' },
+    mission_created: { text: 'Missão Criada', bgColor: 'bg-emerald-950/50', textColor: 'text-emerald-500' },
+    mission_completed: { text: 'Completada', bgColor: 'bg-blue-950/50', textColor: 'text-blue-500' },
     territory_annexed: {
       text: 'Território Anexado',
-      bgColor: 'bg-emerald-900/30',
-      textColor: 'text-emerald-400',
+      bgColor: 'bg-emerald-950/50',
+      textColor: 'text-emerald-500',
     },
     territory_updated: {
       text: 'Território Alterado',
-      bgColor: 'bg-orange-900/30',
-      textColor: 'text-orange-400',
+      bgColor: 'bg-orange-950/50',
+      textColor: 'text-orange-500',
     },
     territory_detached: {
       text: 'Território Perdido',
-      bgColor: 'bg-red-900/30',
-      textColor: 'text-red-400',
+      bgColor: 'bg-red-950/50',
+      textColor: 'text-red-500',
     },
-    default: { text: 'Evento', bgColor: 'bg-zinc-800/50', textColor: 'text-neutral-400' },
+    default: { text: 'Evento', bgColor: 'bg-zinc-900', textColor: 'text-zinc-400' },
   };
   const { text, bgColor, textColor } = labelMap[type] || labelMap.default;
 
   return (
-    <View className={`${bgColor} px-2 py-1 rounded-md`}>
-      <Text className={`${textColor} text-xs font-semibold uppercase tracking-wide`}>{text}</Text>
+    <View className={`${bgColor} px-2 py-0.5 rounded-full border border-zinc-800/50 self-start`}>
+      <Text className={`${textColor} text-[10px] font-bold uppercase tracking-wider`}>{text}</Text>
     </View>
   );
 };
@@ -67,12 +67,9 @@ const EventCategory = ({ type }: { type: string }) => {
     default: 'Geral',
   };
   return (
-    <View className="flex-row items-center">
-      <View className="w-1 h-1 bg-neutral-600 rounded-full mr-2" />
-      <Text className="text-neutral-600 text-xs uppercase tracking-wider">
-        {categoryMap[type] || categoryMap.default}
-      </Text>
-    </View>
+    <Text className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1">
+      {categoryMap[type] || categoryMap.default}
+    </Text>
   );
 };
 
@@ -111,36 +108,28 @@ export function EventsTab({ events, loading }: EventsTabProps) {
   return (
     <ScrollView className="flex-1 mb-8">
       {/* Header */}
-      <View className="mb-6">
-        <View className="flex-row items-center mb-3">
-          <View className="py-1 rounded-md mr-3">
-            <Text className="text-red-600 text-md font-bold uppercase tracking-wider">
-              イベント
-            </Text>
-          </View>
-          <View className="flex-1 h-px bg-neutral-800" />
-          <View className="bg-red-900/30 px-3 py-1 rounded-full ml-3">
-            <Text className="text-red-400 text-xs font-bold">{events.length}</Text>
-          </View>
-        </View>
-
-        <View className="bg-gradient-to-r from-red-950/30 to-transparent border-l-4 border-red-600 p-4 rounded-r-lg">
-          <Text className="text-neutral-400 text-sm leading-5">
-            Acompanhe acontecimentos recentes e marcos importantes do clã
+      <View className="bg-zinc-950 border border-zinc-900 rounded-2xl p-4 mb-6">
+        <View className="flex-row items-center justify-between mb-1">
+          <Text className="text-white text-lg font-black tracking-tight">
+            イベント (Eventos)
           </Text>
+          <View className="bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-full">
+            <Text className="text-zinc-400 text-[10px] font-bold">{events.length} Eventos</Text>
+          </View>
         </View>
+        <Text className="text-zinc-500 text-sm leading-5">
+          Acompanhe acontecimentos recentes e marcos importantes do clã.
+        </Text>
       </View>
 
       {/* Events List */}
       {events.length === 0 ? (
-        <View className="bg-black border border-zinc-900 rounded-lg p-10 items-center">
-          <View className="bg-zinc-900 p-4 rounded-full mb-4">
-            <FontAwesome name="inbox" size={32} color="#71717a" />
-          </View>
-          <Text className="text-white font-semibold text-base mb-1">
+        <View className="bg-zinc-950 border border-zinc-900 rounded-2xl p-8 items-center">
+          <Text className="text-4xl mb-3">静</Text>
+          <Text className="text-white font-bold mb-1">
             Nenhum evento ainda
           </Text>
-          <Text className="text-neutral-500 text-sm text-center">
+          <Text className="text-zinc-500 text-xs text-center">
             Os acontecimentos do clã aparecerão aqui
           </Text>
         </View>
@@ -150,61 +139,47 @@ export function EventsTab({ events, loading }: EventsTabProps) {
             <View key={dateKey} className="mb-6">
               {/* Date Separator */}
               <View className="flex-row items-center mb-4">
-                <View className="bg-zinc-900 px-3 py-1 rounded-full">
-                  <Text className="text-neutral-400 text-xs font-semibold uppercase tracking-wider">
-                    {dateKey}
-                  </Text>
-                </View>
-                <View className="flex-1 h-px bg-zinc-900 ml-3" />
+                <Text className="text-zinc-600 text-xs font-bold uppercase tracking-widest mr-3">
+                  {dateKey}
+                </Text>
+                <View className="flex-1 h-px bg-zinc-900" />
               </View>
 
               {/* Events for this date */}
-              {dateEvents.map((event, index) => (
-                <View
-                  key={event.id}
-                  className={`bg-black border border-zinc-900 rounded-lg p-4 ${
-                    index !== dateEvents.length - 1 ? 'mb-3' : ''
-                  }`}
-                >
-                  {/* Event Header */}
-                  <View className="flex-row items-center justify-between mb-3">
-                    <View className="flex-row items-center flex-1">
-                      <View className="bg-zinc-900 p-2.5 rounded-lg mr-3">
-                        <EventIcon type={event.event_type} />
-                      </View>
-                      <View className="flex">
-                        <EventTypeLabel type={event.event_type} />
-                        <View>
+              <View className="space-y-3">
+                {dateEvents.map((event) => (
+                  <View
+                    key={event.id}
+                    className="bg-zinc-950 border border-zinc-900 rounded-2xl p-4 mb-3"
+                  >
+                    {/* Event Header */}
+                    <View className="flex-row items-center justify-between mb-3">
+                      <View className="flex-row items-center flex-1 gap-3">
+                        <View className="w-10 h-10 bg-zinc-900 rounded-xl items-center justify-center border border-zinc-800">
+                          <EventIcon type={event.event_type} />
+                        </View>
+                        <View className="flex-1">
+                          <EventTypeLabel type={event.event_type} />
                           <EventCategory type={event.event_type} />
                         </View>
                       </View>
-                    </View>
-                    
-                    <View className="bg-zinc-900 px-2  py-1 rounded">
-                      <Text className="text-neutral-500 text-xs">
+                      
+                      <Text className="text-zinc-500 text-xs font-bold">
                         {formatDistanceToNow(new Date(event.created_at), {
                           addSuffix: true,
                           locale: ptBR,
                         })}
                       </Text>
                     </View>
-                  </View>
 
-                  {/* Event Description */}
-                  <Text className="text-neutral-300 text-sm leading-5 mb-3">
-                    {event.description}
-                  </Text>
+                    {/* Event Description */}
+                    <Text className="text-zinc-300 text-sm leading-5 mb-3">
+                      {event.description}
+                    </Text>
 
-                  {/* Event Footer */}
-                  <View className="pt-3 border-t border-zinc-900">
-                    <View className="flex-row items-center">
-                      <FontAwesome
-                        name="clock-o"
-                        size={11}
-                        color="#71717a"
-                        style={{ marginRight: 6 }}
-                      />
-                      <Text className="text-neutral-600 text-xs">
+                    {/* Event Footer */}
+                    <View className="pt-3 border-t border-zinc-900/50">
+                      <Text className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest">
                         {new Date(event.created_at).toLocaleString('pt-BR', {
                           day: '2-digit',
                           month: 'short',
@@ -214,8 +189,8 @@ export function EventsTab({ events, loading }: EventsTabProps) {
                       </Text>
                     </View>
                   </View>
-                </View>
-              ))}
+                ))}
+              </View>
             </View>
           ))}
         </View>

@@ -8,6 +8,17 @@ type TerritoriesListProps = {
   onTerritoryPress?: (territory: EnrichedTerritory) => void;
 };
 
+function StatPill({ label, value, kanji, accent = 'zinc' }: { label: string; value: string | number; kanji: string, accent?: 'zinc' | 'red' | 'emerald' }) {
+  const kanjiColor = accent === 'red' ? 'text-red-600' : accent === 'emerald' ? 'text-emerald-500' : 'text-zinc-500';
+  return (
+    <View className="flex-1 min-w-[45%] items-center bg-zinc-950 border border-zinc-900 rounded-2xl py-3 px-2">
+      <Text className={`${kanjiColor} text-xs font-bold mb-1`}>{kanji}</Text>
+      <Text className="text-white font-black text-xl">{value}</Text>
+      <Text className="text-zinc-600 text-[10px] mt-0.5 tracking-wider uppercase">{label}</Text>
+    </View>
+  );
+}
+
 export function TerritoriesList({ territories, onTerritoryPress }: TerritoriesListProps) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -34,67 +45,32 @@ export function TerritoriesList({ territories, onTerritoryPress }: TerritoriesLi
   };
 
   return (
-    <View>
-      {/* Header com descrição */}
-      <View className="bg-neutral-900/50 border-l-4 border-red-600 p-4 rounded-r-lg mb-5">
-        <Text className="text-neutral-300 text-sm leading-6">
-          Uma visão geral de todos os territórios e quem os controla. 
-          Expanda para ver mais detalhes sobre cada localização.
-        </Text>
-      </View>
-
+    <View className="pb-10">
       {/* Cards de estatísticas */}
-      <View className="flex-row flex-wrap gap-2 mb-5">
-        <View className="flex-1 min-w-[45%] bg-black border border-zinc-800 rounded-lg p-3">
-          <View className="flex-row items-center mb-1">
-            <FontAwesome name="map" size={14} color="#737373" />
-            <Text className="text-neutral-500 text-xs ml-2">Total</Text>
-          </View>
-          <Text className="text-white text-2xl font-bold">{stats.total}</Text>
-        </View>
-
-        <View className="flex-1 min-w-[45%] bg-black border border-zinc-800 rounded-lg p-3">
-          <View className="flex-row items-center mb-1">
-            <FontAwesome name="building" size={14} color="#737373" />
-            <Text className="text-neutral-500 text-xs ml-2">Distritos</Text>
-          </View>
-          <Text className="text-white text-2xl font-bold">{stats.districts}</Text>
-        </View>
-
-        <View className="flex-1 min-w-[45%] bg-black border border-red-900/50 rounded-lg p-3">
-          <View className="flex-row items-center mb-1">
-            <FontAwesome name="shield" size={14} color="#ef4444" />
-            <Text className="text-red-400 text-xs ml-2">Controlados</Text>
-          </View>
-          <Text className="text-red-500 text-2xl font-bold">{stats.controlled}</Text>
-        </View>
-
-        <View className="flex-1 min-w-[45%] bg-black border border-green-900/50 rounded-lg p-3">
-          <View className="flex-row items-center mb-1">
-            <FontAwesome name="flag-o" size={14} color="#22c55e" />
-            <Text className="text-green-400 text-xs ml-2">Neutros</Text>
-          </View>
-          <Text className="text-green-500 text-2xl font-bold">{stats.neutral}</Text>
-        </View>
+      <View className="flex-row flex-wrap gap-3 mb-6">
+        <StatPill kanji="地" label="Total" value={stats.total} />
+        <StatPill kanji="区" label="Distritos" value={stats.districts} />
+        <StatPill kanji="支配" label="Controlados" value={stats.controlled} accent="red" />
+        <StatPill kanji="中立" label="Neutros" value={stats.neutral} accent="emerald" />
       </View>
 
       {/* Lista de territórios agrupados por distrito */}
-      <View className="space-y-3 ">
+      <View className="space-y-4">
         {Object.entries(territoryGroups).map(([districtName, districtTerritories]) => (
-          <View key={districtName} className="mb-2 ">
+          <View key={districtName} className="mb-4">
             {/* Header do distrito */}
-            <View className="flex-row items-center mb-2">
-              <FontAwesome name="building" size={12} color="#ef4444" />
-              <Text className="text-red-500 text-sm font-bold ml-2 flex-1">
+            <View className="flex-row items-center mb-3">
+              <Text className="text-red-600 text-sm font-black mr-2">区</Text>
+              <Text className="text-white text-sm font-bold flex-1 tracking-wider uppercase">
                 {districtName}
               </Text>
-              <Text className="text-neutral-500 text-xs">
+              <Text className="text-zinc-500 text-xs">
                 {districtTerritories.length} {districtTerritories.length === 1 ? 'território' : 'territórios'}
               </Text>
             </View>
 
             {/* Territórios do distrito */}
-            <View className="space-y-4 mt-2 gap-4">
+            <View className="space-y-3 gap-3">
               {districtTerritories.map((territory) => {
                 const isExpanded = expandedId === territory.id;
                 const isControlled = !!territory.clans;
@@ -103,55 +79,55 @@ export function TerritoriesList({ territories, onTerritoryPress }: TerritoriesLi
                   <Pressable
                     key={territory.id}
                     onPress={() => toggleExpand(territory.id)}
-                    className="active:opacity-80"
+                    className="active:opacity-60"
                   >
-                    <View className={`bg-black border  rounded-lg overflow-hidden ${
-                      isControlled ? 'border-red-900/50' : 'border-green-900/50'
-                    }`}>
+                    <View className="bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden">
                       {/* Header do território */}
                       <View className="p-4 flex-row items-center justify-between">
                         <View className="flex-1 mr-3">
-                          <Text className="text-white text-base font-semibold mb-1">
+                          <Text className="text-white text-base font-black tracking-tight mb-1">
                             {territory.name}
                           </Text>
                           
                           {/* Status do controle */}
-                          <View className="flex-row items-center">
-                            <View className={`w-2 h-2 rounded-full mr-2 ${
-                              isControlled ? 'bg-red-500' : 'bg-green-500'
-                            }`} />
-                            <Text className={`text-sm font-bold ${
-                              isControlled ? 'text-red-500' : 'text-green-500'
+                          <View className="flex-row items-center gap-2">
+                            <View className={`px-2 py-0.5 rounded-full border border-zinc-800 ${
+                              isControlled ? 'bg-red-950/30' : 'bg-emerald-950/30'
                             }`}>
-                              {isControlled ? territory?.clans?.name : 'Território Neutro'}
-                            </Text>
+                              <Text className={`text-[10px] font-bold uppercase tracking-wider ${
+                                isControlled ? 'text-red-500' : 'text-emerald-500'
+                              }`}>
+                                {isControlled ? territory?.clans?.name : 'Território Neutro'}
+                              </Text>
+                            </View>
                             {isControlled && territory?.clans?.tag && (
-                              <Text className="text-red-400 text-xs ml-1">
+                              <Text className="text-zinc-500 text-xs font-bold">
                                 [{territory.clans.tag}]
                               </Text>
                             )}
                           </View>
                         </View>
 
-                        {/* Ícone de expandir */}
-                        <FontAwesome 
-                          name={isExpanded ? "chevron-up" : "chevron-down"} 
-                          size={14} 
-                          color="#737373" 
-                        />
+                        <View className="w-8 h-8 rounded-full bg-zinc-900 items-center justify-center border border-zinc-800">
+                          <FontAwesome 
+                            name={isExpanded ? "chevron-up" : "chevron-down"} 
+                            size={12} 
+                            color="#71717a" 
+                          />
+                        </View>
                       </View>
 
                       {/* Conteúdo expandido */}
                       {isExpanded && (
-                        <View className="px-4 pb-4 border-t border-zinc-900">
-                          <View className="mt-3 space-y-2">
+                        <View className="px-4 pb-4 border-t border-zinc-900/50 mt-1 pt-3">
+                          <View className="space-y-3">
                             {/* Descrição do território */}
                             {territory.description && (
-                              <View>
-                                <Text className="text-neutral-500 text-xs font-semibold mb-1">
+                              <View className="mb-3">
+                                <Text className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest mb-1">
                                   DESCRIÇÃO
                                 </Text>
-                                <Text className="text-neutral-400 text-sm leading-5">
+                                <Text className="text-zinc-400 text-xs leading-5">
                                   {territory.description}
                                 </Text>
                               </View>
@@ -159,17 +135,19 @@ export function TerritoriesList({ territories, onTerritoryPress }: TerritoriesLi
 
                             {/* Informações do clã controlador */}
                             {isControlled && territory.clans && (
-                              <View className="mt-3 bg-red-950/20 border border-red-900/30 rounded-lg p-3">
-                                <Text className="text-red-400 text-xs font-semibold mb-2">
-                                  CONTROLADO POR
-                                </Text>
-                                <View className="flex-row items-center">
-                                  <FontAwesome name="shield" size={16} color="#ef4444" />
-                                  <View className="ml-3 flex-1">
-                                    <Text className="text-white font-bold">
-                                      {territory.clans.name}
-                                    </Text>
-                                  </View>
+                              <View className="mb-3 bg-black border border-zinc-900 rounded-xl p-3 flex-row items-center gap-3">
+                                <View className="w-10 h-10 rounded-lg bg-zinc-900 border border-zinc-800 items-center justify-center">
+                                  <Text className="text-red-500 text-xl font-black">
+                                    {territory.clans.emblem || '組'}
+                                  </Text>
+                                </View>
+                                <View className="flex-1">
+                                  <Text className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase mb-0.5">
+                                    Controlado Por
+                                  </Text>
+                                  <Text className="text-white font-bold">
+                                    {territory.clans.name}
+                                  </Text>
                                 </View>
                               </View>
                             )}
@@ -177,15 +155,15 @@ export function TerritoriesList({ territories, onTerritoryPress }: TerritoriesLi
                             {/* Botão de ação (se tiver callback) */}
                             {onTerritoryPress && (
                               <Pressable
-                                className="active:opacity-70 mt-3"
+                                className="active:opacity-60"
                                 onPress={() => onTerritoryPress(territory)}
                               >
-                                <View className={`rounded-lg py-3 items-center ${
+                                <View className={`rounded-xl py-3 items-center border ${
                                   isControlled 
-                                    ? 'bg-red-600' 
-                                    : 'bg-green-600'
+                                    ? 'bg-red-600 border-red-500' 
+                                    : 'bg-emerald-600 border-emerald-500'
                                 }`}>
-                                  <Text className="text-white font-bold text-sm">
+                                  <Text className="text-white font-black text-xs uppercase tracking-widest">
                                     {isControlled ? 'VER DETALHES' : 'RECLAMAR TERRITÓRIO'}
                                   </Text>
                                 </View>
@@ -204,9 +182,9 @@ export function TerritoriesList({ territories, onTerritoryPress }: TerritoriesLi
       </View>
 
       {territories.length === 0 && (
-        <View className="bg-neutral-900/30 border border-neutral-800 rounded-lg p-8 items-center">
-          <FontAwesome name="map-o" size={40} color="#525252" />
-          <Text className="text-neutral-500 text-sm mt-3 text-center">
+        <View className="bg-zinc-950 border border-zinc-900 rounded-2xl p-8 items-center">
+          <Text className="text-4xl mb-3">無</Text>
+          <Text className="text-zinc-500 text-sm mt-1 text-center">
             Nenhum território encontrado
           </Text>
         </View>

@@ -18,28 +18,28 @@ export function CommentItem({ comment }: CommentItemProps) {
   };
 
   return (
-    <View className="flex-row gap-3 px-4 py-3 border-b border-zinc-900">
+    <View className="flex-row gap-3 px-4 py-4 border-b border-zinc-900/50 bg-black">
       <Pressable onPress={navigateToProfile} className="active:opacity-60">
         {comment.profiles.avatar_url ? (
           <Image
             source={{ uri: comment.profiles.avatar_url }}
-            className="w-8 h-8 rounded-full border border-zinc-800"
+            className="w-10 h-10 rounded-xl border border-zinc-800"
           />
         ) : (
-          <View className="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 items-center justify-center">
-            <Text className="text-sm">🐲</Text>
+          <View className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 items-center justify-center">
+            <Text className="text-lg">🐲</Text>
           </View>
         )}
       </Pressable>
 
-      <View className="flex-1">
-        <View className="flex-row items-center gap-2 mb-1">
+      <View className="flex-1 bg-zinc-950 border border-zinc-900 p-3 rounded-2xl rounded-tl-none">
+        <View className="flex-row items-center gap-2 mb-1.5">
           <Pressable onPress={navigateToProfile} className="active:opacity-60">
-            <Text className="text-white font-bold text-sm">{comment.profiles.username}</Text>
+            <Text className="text-white font-black text-sm tracking-tight">{comment.profiles.username}</Text>
           </Pressable>
-          <Text className="text-zinc-700 text-xs">{formatDate(comment.created_at)}</Text>
+          <Text className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest">{formatDate(comment.created_at)}</Text>
         </View>
-        <Text className="text-zinc-400 text-sm leading-relaxed">{comment.content}</Text>
+        <Text className="text-zinc-300 text-sm leading-relaxed">{comment.content}</Text>
       </View>
     </View>
   );

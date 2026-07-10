@@ -77,14 +77,14 @@ export function TerritoryMapList({ districts, territories }: TerritoryListProps)
   }, [selectedDistrict, districts.length, filterOpacities, getSelectedIndex, slideAnim]);
 
   return (
-    <ScrollView className="flex-1 w-full max-w-full">
+    <ScrollView className="flex-1 w-full max-w-full pb-10">
       <View className="w-full max-w-full">
         {/* Header */}
         <View className="mb-6">
-          <Text className="text-white text-2xl font-bold mb-2">
+          <Text className="text-white text-2xl font-black mb-2 tracking-tight">
             Territórios de Tóquio
           </Text>
-          <Text className="text-neutral-400 leading-6">
+          <Text className="text-zinc-500 leading-6">
             Tóquio está dividida em distritos estratégicos. Cada território controlado 
             gera receita passiva e influência. Expanda seu domínio com sabedoria.
           </Text>
@@ -92,11 +92,11 @@ export function TerritoryMapList({ districts, territories }: TerritoryListProps)
 
         {/* District Filter Pills - Animated with Sliding Indicator */}
         <View className="mb-6">
-          <Text className="text-neutral-500 text-xs font-semibold mb-3 uppercase tracking-wider">
+          <Text className="text-zinc-600 text-xs font-bold mb-3 uppercase tracking-widest">
             Filtrar por Distrito
           </Text>
           
-          <View className="bg-black border border-black rounded-lg overflow-hidden">
+          <View className="bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden">
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View className="flex-row relative">
                 {/* Sliding Bottom Border Indicator */}
@@ -123,13 +123,13 @@ export function TerritoryMapList({ districts, territories }: TerritoryListProps)
                 {/* Todos Button */}
                 <Pressable
                   onPress={() => setSelectedDistrict(null)}
-                  className="px-6 py-3 border-b border-zinc-900"
+                  className="px-6 py-4"
                   style={{ minWidth: 100 }}
                 >
                   <Animated.Text
                     style={{ opacity: filterOpacities.all }}
-                    className={`font-semibold text-center ${
-                      selectedDistrict === null ? 'text-white' : 'text-neutral-500'
+                    className={`font-bold text-center ${
+                      selectedDistrict === null ? 'text-white' : 'text-zinc-500'
                     }`}
                   >
                     Todos
@@ -141,13 +141,13 @@ export function TerritoryMapList({ districts, territories }: TerritoryListProps)
                   <Pressable
                     key={district.id}
                     onPress={() => setSelectedDistrict(district.id)}
-                    className="px-6 py-3 border-b border-zinc-900"
+                    className="px-6 py-4"
                     style={{ minWidth: 100 }}
                   >
                     <Animated.Text
                       style={{ opacity: filterOpacities[district.id] || 0.5 }}
-                      className={`font-semibold text-center ${
-                        selectedDistrict === district.id ? 'text-white' : 'text-neutral-500'
+                      className={`font-bold text-center ${
+                        selectedDistrict === district.id ? 'text-white' : 'text-zinc-500'
                       }`}
                     >
                       {district.name}
@@ -162,20 +162,20 @@ export function TerritoryMapList({ districts, territories }: TerritoryListProps)
         {/* Stats Overview - Only show when no district is selected */}
         {!selectedDistrict && (
           <View className="mb-6">
-            <Text className="text-neutral-500 text-xs font-semibold mb-3 uppercase tracking-wider">
+            <Text className="text-zinc-600 text-xs font-bold mb-3 uppercase tracking-widest">
               Visão Geral
             </Text>
-            <View className="flex-row flex-wrap -mx-1">
+            <View className="flex-row flex-wrap gap-y-3 justify-between">
               {territoriesByDistrict.map(({ district, controlledCount, totalCount }) => (
-                <View key={district.id} className="w-1/2 px-1 mb-2">
-                  <View className="bg-black border border-zinc-900 rounded-lg p-3">
-                    <Text className="text-white font-semibold mb-1">{district.name}</Text>
-                    <View className="flex-row items-center justify-between">
-                      <Text className="text-neutral-500 text-xs">
-                        {controlledCount}/{totalCount} controlados
+                <View key={district.id} className="w-[48%]">
+                  <View className="bg-zinc-950 border border-zinc-900 rounded-2xl p-4">
+                    <Text className="text-white font-black tracking-tight mb-2">{district.name}</Text>
+                    <View className="flex-row items-center justify-between mt-1">
+                      <Text className="text-zinc-500 text-xs font-bold">
+                        {controlledCount}/{totalCount} <Text className="font-normal text-[10px] uppercase tracking-wider">Ocupados</Text>
                       </Text>
-                      <View className="bg-zinc-900 px-2 py-1 rounded">
-                        <Text className="text-red-500 text-xs font-bold">
+                      <View className="bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-full">
+                        <Text className="text-red-500 text-[10px] font-bold">
                           {totalCount > 0 ? Math.round((controlledCount / totalCount) * 100) : 0}%
                         </Text>
                       </View>
@@ -189,39 +189,40 @@ export function TerritoryMapList({ districts, territories }: TerritoryListProps)
 
         {/* Territory List */}
         <View className="mb-4">
-          <Text className="text-neutral-500 text-xs font-semibold mb-3 uppercase tracking-wider">
+          <Text className="text-zinc-600 text-xs font-bold mb-3 uppercase tracking-widest">
             {selectedDistrict 
               ? `Territórios em ${districts.find(d => d.id === selectedDistrict)?.name}`
               : 'Todos os Territórios'
             }
           </Text>
           
+          <View className="space-y-3">
           {filteredTerritories.length > 0 ? (
             filteredTerritories.map((territory, index) => (
               <View 
                 key={territory.id} 
-                className={`bg-black border border-zinc-900 rounded-lg p-4 ${
+                className={`bg-zinc-950 border border-zinc-900 rounded-2xl p-4 ${
                   index !== filteredTerritories.length - 1 ? 'mb-3' : ''
                 }`}
               >
                 <View className="flex-row items-start justify-between mb-2">
                   <View className="flex-1">
-                    <Text className="text-white font-bold text-base mb-1">
+                    <Text className="text-white font-black text-base tracking-tight mb-1">
                       {territory.name}
                     </Text>
-                    <Text className="text-neutral-500 text-sm">
+                    <Text className="text-zinc-500 text-sm">
                       {getDistrictName(territory?.district_id ?? '') }
                     </Text>
                   </View>
                   {territory.clans ? (
-                    <View className="bg-red-900/30 border border-red-800/50 px-3 py-1 rounded-full">
-                      <Text className="text-red-400 text-xs font-semibold">
+                    <View className="bg-red-950/30 border border-zinc-800 px-3 py-1 rounded-full">
+                      <Text className="text-red-500 text-[10px] font-bold uppercase tracking-wider">
                         Controlado
                       </Text>
                     </View>
                   ) : (
-                    <View className="bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-full">
-                      <Text className="text-neutral-500 text-xs font-semibold">
+                    <View className="bg-emerald-950/30 border border-zinc-800 px-3 py-1 rounded-full">
+                      <Text className="text-emerald-500 text-[10px] font-bold uppercase tracking-wider">
                         Neutro
                       </Text>
                     </View>
@@ -229,22 +230,27 @@ export function TerritoryMapList({ districts, territories }: TerritoryListProps)
                 </View>
                 
                 {territory.clans && (
-                  <View className="flex-row items-center pt-2 border-t border-zinc-900">
-                    <Text className="text-neutral-600 text-xs mr-2">Controlado por</Text>
-                    <Text className="text-red-500 text-sm font-semibold">
+                  <View className="flex-row items-center pt-3 mt-1 border-t border-zinc-900/50 gap-2">
+                    <Text className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest">Controlado por</Text>
+                    <Text className="text-white text-sm font-bold">
                       {territory.clans.name}
+                    </Text>
+                    <Text className="text-zinc-500 text-xs font-bold">
+                      [{territory.clans.tag}]
                     </Text>
                   </View>
                 )}
               </View>
             ))
           ) : (
-            <View className="bg-black border border-zinc-900 rounded-lg p-8 items-center">
-              <Text className="text-neutral-500 text-center">
+            <View className="bg-zinc-950 border border-zinc-900 rounded-2xl p-8 items-center">
+              <Text className="text-4xl mb-3">無</Text>
+              <Text className="text-zinc-500 text-center">
                 Nenhum território encontrado neste distrito.
               </Text>
             </View>
           )}
+          </View>
         </View>
       </View>
     </ScrollView>
