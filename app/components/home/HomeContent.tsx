@@ -170,7 +170,8 @@ export function HomeContent({ profile, handleLogout, loggingOut }: HomeContentPr
       {/* ── Divider ── */}
       <View className="h-px bg-zinc-900 mb-6" />
 
-      {/* ── Logout ── */}
+      {/* ── Logout ── 
+      
       <View className="items-center">
         <Pressable
           onPress={handleLogout}
@@ -185,6 +186,8 @@ export function HomeContent({ profile, handleLogout, loggingOut }: HomeContentPr
 
       </View>
       
+      */}
+
       {/* ── Footer ── */}
       <View className="items-center pt-4">
         <Text className="text-zinc-800 text-xs tracking-[0.3em]">罪 · TSUMI · 2025</Text>
