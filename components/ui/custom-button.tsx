@@ -28,7 +28,7 @@ export function CustomButton({
   
   switch (variant) {
     case 'primary':
-      variantClasses = "bg-red-600 active:bg-red-700 shadow-lg shadow-red-600/40 border border-red-500/50";
+      variantClasses = "bg-red-600 active:bg-red-700 border border-red-500/50";
       textVariantClasses = "text-white font-bold tracking-widest";
       break;
     case 'secondary':
