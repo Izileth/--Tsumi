@@ -18,21 +18,21 @@ export function CommentItem({ comment }: CommentItemProps) {
   };
 
   return (
-    <View className="flex-row gap-3 px-4 py-4 border-b border-zinc-900/50 bg-black">
+    <View className="flex-row gap-3 mb-4">
       <Pressable onPress={navigateToProfile} className="active:opacity-60">
         {comment.profiles.avatar_url ? (
           <Image
             source={{ uri: comment.profiles.avatar_url }}
-            className="w-10 h-10 rounded-xl border border-zinc-800"
+            className="w-10 h-10 rounded-2xl border border-zinc-800"
           />
         ) : (
-          <View className="w-10 h-10 rounded-xl bg-zinc-900 border border-zinc-800 items-center justify-center">
+          <View className="w-10 h-10 rounded-2xl bg-zinc-900 border border-zinc-800 items-center justify-center">
             <Text className="text-lg">🐲</Text>
           </View>
         )}
       </Pressable>
 
-      <View className="flex-1 bg-zinc-950 border border-zinc-900 p-3 rounded-2xl rounded-tl-none">
+      <View className="flex-1 bg-zinc-950 border border-zinc-900 p-3.5 rounded-3xl rounded-tl-sm">
         <View className="flex-row items-center gap-2 mb-1.5">
           <Pressable onPress={navigateToProfile} className="active:opacity-60">
             <Text className="text-white font-black text-sm tracking-tight">{comment.profiles.username}</Text>

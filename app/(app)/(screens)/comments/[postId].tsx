@@ -29,11 +29,10 @@ export default function CommentsScreen() {
     return (
       <View className="flex-1 justify-center items-center bg-black">
         <View className="items-center gap-4">
-          <View className="w-20 h-20 bg-red-950/20 rounded-full items-center justify-center">
+          <View className="w-20 h-20 bg-zinc-950 border border-zinc-900 rounded-3xl items-center justify-center">
             <ActivityIndicator size="large" color="#ef4444" />
           </View>
-          <Text className="text-neutral-500 text-base">Carregando comentários...</Text>
-          <Text className="text-red-600 text-sm">コメント読み込み中</Text>
+          <Text className="text-zinc-500 font-bold text-xs uppercase tracking-widest">Carregando comentários...</Text>
         </View>
       </View>
     );
@@ -43,19 +42,19 @@ export default function CommentsScreen() {
     return (
       <View className="flex-1 justify-center items-center bg-black p-6">
         <View className="items-center">
-          <View className="w-20 h-20 bg-red-950/30 rounded-full items-center justify-center mb-6">
+          <View className="w-20 h-20 bg-red-950/20 border border-red-900/30 rounded-3xl items-center justify-center mb-6">
             <Text className="text-red-600 text-3xl">⚠</Text>
           </View>
           
-          <Text className="text-red-500 text-center text-lg font-bold mb-2">Erro ao carregar</Text>
-          <Text className="text-neutral-500 text-center mb-6">{error}</Text>
+          <Text className="text-red-500 text-center text-xl font-black tracking-tight mb-2">Erro ao carregar</Text>
+          <Text className="text-zinc-500 text-center text-sm font-bold mb-6">{error}</Text>
           
           <Pressable 
             onPress={() => fetchPost()}
-            className="bg-red-600 px-6 py-3 rounded-lg flex-row items-center gap-2"
+            className="bg-zinc-900 border border-zinc-800 px-6 py-3 rounded-2xl flex-row items-center gap-3 active:opacity-60"
           >
-            <RefreshCw size={18} color="#fff" />
-            <Text className="text-white font-bold">Tentar novamente</Text>
+            <RefreshCw size={16} color="#d4d4d8" />
+            <Text className="text-zinc-300 font-black text-sm">TENTAR NOVAMENTE</Text>
           </Pressable>
         </View>
       </View>
@@ -70,29 +69,26 @@ export default function CommentsScreen() {
     >
       <View className="flex-1 bg-black">
         {/* Header */}
-        <View className=" border-b-2 border-red-900/20 bg-black">
-          <View className="flex-row items-center px-4 py-4">
+        <View className="bg-zinc-950 border-b border-zinc-900">
+          <View className="flex-row items-center px-4 py-4 pt-6">
             <Pressable 
               onPress={() => router.back()} 
-              className="w-10 h-10 bg-transparent rounded-lg items-center justify-center mr-3"
+              className="w-10 h-10 bg-zinc-900 border border-zinc-800 rounded-xl items-center justify-center mr-4 active:opacity-60"
             >
-              <ArrowLeft size={20} color="#ef4444" />
+              <ArrowLeft size={18} color="#a1a1aa" />
             </Pressable>
             
             <View className="flex-1">
-              <View className="flex-row items-center gap-2">
-                <View className="w-1 h-5 bg-red-600 rounded-full" />
-                <Text className="text-xl font-bold text-white">Comentários</Text>
-              </View>
-              <Text className="text-sm text-neutral-500 ml-3 mt-0.5">
-                Respondendo a <Text className="text-red-500 font-bold">@{post.profiles.username}</Text>
+              <Text className="text-xl font-black text-white tracking-tight">Comentários</Text>
+              <Text className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-0.5">
+                DE <Text className="text-red-500">@{post.profiles.username}</Text>
               </Text>
             </View>
 
             {/* Contador de comentários */}
-            <View className="bg-red-950/30 border border-red-900/50 rounded-full px-3 py-1">
-              <Text className="text-red-500 font-bold text-sm">
-                {post.post_comments?.length || 0}
+            <View className="bg-red-950/30 border border-red-900/50 rounded-xl px-3 py-1.5">
+              <Text className="text-red-500 font-black text-[10px] uppercase tracking-widest">
+                {post.post_comments?.length || 0} REPS
               </Text>
             </View>
           </View>
@@ -103,15 +99,15 @@ export default function CommentsScreen() {
           data={post.post_comments}
           renderItem={({ item }) => <CommentItem comment={item} />}
           keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 16 }}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 20, paddingBottom: 24 }}
           ListEmptyComponent={
             <View className="flex-1 justify-center items-center py-24">
-              <View className="w-20 h-20 bg-red-950/20 rounded-full items-center justify-center mb-6">
-                <MessageSquare size={40} color="#7f1d1d" />
+              <View className="w-20 h-20 bg-zinc-950 border border-zinc-900 rounded-3xl items-center justify-center mb-6">
+                <MessageSquare size={32} color="#52525b" />
               </View>
-              <Text className="text-neutral-400 text-lg font-bold mb-2">Nenhum comentário ainda</Text>
-              <Text className="text-neutral-600 text-base mb-1">Seja o primeiro a comentar</Text>
-              <Text className="text-red-900 text-sm">最初のコメントを残す</Text>
+              <Text className="text-white text-lg font-black tracking-tight mb-1">Nenhum comentário ainda</Text>
+              <Text className="text-zinc-500 text-xs font-bold uppercase tracking-widest">Seja o primeiro a comentar</Text>
+              <Text className="text-red-500/50 text-[10px] font-black uppercase tracking-widest mt-4">最初のコメントを残す</Text>
             </View>
           }
           onRefresh={fetchPost}
@@ -119,19 +115,16 @@ export default function CommentsScreen() {
         />
 
         {/* Input de Comentário */}
-        <View className="border-t-2 border-red-900/20 bg-black px-4 py-3">
-          <View className="flex-row items-center mb-12 gap-3">
-            {/* Barra decorativa */}
-            <View className="w-1 h-10 bg-red-600 rounded-full" />
-            
+        <View className="border-t border-zinc-900 bg-zinc-950 px-4 py-3 pb-8">
+          <View className="flex-row items-center gap-3">
             {/* Input */}
-            <View className="flex-1 bg-black border border-zinc-800 rounded-lg overflow-hidden">
+            <View className="flex-1 bg-black border border-zinc-800 rounded-2xl overflow-hidden min-h-[48px] justify-center">
               <TextInput
                 value={commentText}
                 onChangeText={setCommentText}
                 placeholder="Adicionar um comentário..."
-                placeholderTextColor="#444"
-                className="px-4 py-2.5 text-white"
+                placeholderTextColor="#52525b"
+                className="px-4 py-3 text-white font-bold text-sm"
                 multiline
                 maxLength={500}
               />
@@ -141,26 +134,26 @@ export default function CommentsScreen() {
             <Pressable 
               onPress={handleAddComment} 
               disabled={isSending || !commentText.trim()}
-              className={`w-11 h-11 rounded-lg items-center justify-center ${
+              className={`w-12 h-12 rounded-2xl items-center justify-center border ${
                 isSending || !commentText.trim() 
-                  ? 'bg-black border border-zinc-800' 
-                  : 'bg-red-600'
+                  ? 'bg-zinc-900 border-zinc-800' 
+                  : 'bg-red-600 border-red-500'
               }`}
             >
               <Send 
-                size={20} 
-                color={isSending || !commentText.trim() ? '#444' : '#ffffff'} 
+                size={18} 
+                color={isSending || !commentText.trim() ? '#71717a' : '#ffffff'} 
               />
             </Pressable>
           </View>
 
           {/* Contador de caracteres */}
           {commentText.length > 0 && (
-            <View className="flex-row justify-end mt-1.5 px-1">
-              <Text className={`text-xs ${
+            <View className="flex-row justify-end mt-2 px-2">
+              <Text className={`text-[10px] font-bold uppercase tracking-widest ${
                 commentText.length > 450 
                   ? 'text-red-500' 
-                  : 'text-neutral-600'
+                  : 'text-zinc-600'
               }`}>
                 {commentText.length}/500
               </Text>
